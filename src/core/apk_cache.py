@@ -34,7 +34,7 @@ import os
 import sys
 import threading
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 from urllib.parse import quote
 
 from src.core.logger import pr, wpr
@@ -162,3 +162,66 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+class RvbCache:
+    """Read-only use of nullcpy/rvb's public stock-APK cache (github.com/nullcpy/apks):
+    one release per package, assets named <pkg>-<version>[-<versionCode>]-<arch>.<ext>,
+    with "arm-v7a" for armeabi-v7a. rvb keeps older versions there that the stores no
+    longer offer. What comes from it is signature-checked like a store download."""
+
+    REPO = "nullcpy/apks"
+    _ARCH: ClassVar[dict[str, str]] = {"armeabi-v7a": "arm-v7a"}
+
+    def __init__(self, net: NetworkManager) -> None:
+        self.net = net
+        self._assets: dict[str, list[dict[str, Any]]] = {}
+
+    def _list(self, pkg: str) -> list[dict[str, Any]]:
+        if pkg not in self._assets:
+            try:
+                rel = json.loads(self.net.get(f"{_API}/repos/{self.REPO}/releases/tags/{quote(pkg)}", headers=self.net.gh_headers))
+                self._assets[pkg] = rel.get("assets", [])
+            except (NetworkError, json.JSONDecodeError):
+                self._assets[pkg] = []
+        return self._assets[pkg]
+
+    @staticmethod
+    def _version_matches(file_version: str, version: str) -> bool:
+        """'6.6' matches '6.6build016', '4.11.1' matches '4.11.1GF' and '1.25.6' matches
+        '1.25.6-1037' (version code appended), but '6.6' never matches '6.61'."""
+        want = version.strip().lstrip("v")
+        have = file_version.lstrip("v")
+        if have == want:
+            return True
+        return have.startswith(want) and not (have[len(want)].isdigit() or have[len(want)] == ".")
+
+    def fetch(self, pkg: str, version: str, arch: str, dest_dir: Path) -> Path | None:
+        want_arches = [self._ARCH.get(arch, arch)] + ([] if arch == "all" else ["all"])
+        best: tuple[int, dict[str, Any]] | None = None
+        for asset in self._list(pkg):
+            name = str(asset.get("name", ""))
+            stem, dot, ext = name.rpartition(".")
+            if not dot or f".{ext}" not in (".apk", *BUNDLE_SUFFIXES) or not stem.startswith(pkg + "-"):
+                continue
+            rest = stem[len(pkg) + 1:]
+            file_arch = next((a for a in ("arm64-v8a", "arm-v7a", "x86_64", "x86", "all") if rest.endswith("-" + a)), "")
+            if file_arch not in want_arches:
+                continue
+            file_version = rest[: -len(file_arch) - 1]
+            if not self._version_matches(file_version, version):
+                continue
+            rank = want_arches.index(file_arch)
+            if best is None or rank < best[0]:
+                best = (rank, asset)
+        if not best:
+            return None
+        asset = best[1]
+        dest = dest_dir / asset["name"]
+        pr(f"Downloading '{asset['name']}' from rvb's APK cache ({self.REPO})")
+        try:
+            self.net.download(asset["browser_download_url"], dest)
+        except NetworkError as exc:
+            wpr(f"rvb's APK cache download failed ({exc})")
+            return None
+        return dest

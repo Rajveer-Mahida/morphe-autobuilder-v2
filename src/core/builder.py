@@ -19,7 +19,7 @@ import zipfile
 from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from pathlib import Path
 
-from src.core.apk_cache import ApkCache, asset_name, candidates
+from src.core.apk_cache import ApkCache, RvbCache, asset_name, candidates
 from src.core.config import BUILD_DIR, TEMP_DIR, AppEntry, Config, file_slug
 from src.core.logger import IS_GITHUB, epr, is_interrupted, pr, wpr
 from src.core.network import NetworkError, NetworkManager
@@ -76,7 +76,7 @@ def _resolve_version(entry: AppEntry, patcher: PatcherCLI, list_patches: str, pk
     pr(f"Choosing version '{version}'{vcode_str} for '{entry.table}'")
     return version, vcode, is_custom
 
-def _download_apk(entry: AppEntry, version: str, arch: str, pkg_name: str, scrapers: dict[str, BaseScraper], dl_from: str, failed_sources: set[str], cache: ApkCache, version_code: str | None = None) -> tuple[DownloadResult, bool]:
+def _download_apk(entry: AppEntry, version: str, arch: str, pkg_name: str, scrapers: dict[str, BaseScraper], dl_from: str, failed_sources: set[str], cache: ApkCache, patcher: PatcherCLI, version_code: str | None = None) -> tuple[DownloadResult, bool]:
     """The stock APK, and whether it came from a store (so it should be added to the cache)."""
     arch_f = arch.replace(" ", "")
     version_f = version.replace(" ", "").lstrip("v")
@@ -93,6 +93,16 @@ def _download_apk(entry: AppEntry, version: str, arch: str, pkg_name: str, scrap
     if cached := cache.fetch(pkg_name, version, arch_f, TEMP_DIR):
         return DownloadResult(path=cached, is_bundle=cached.suffix in _BUNDLE_SUFFIXES), False
 
+    # rvb's public cache keeps versions the stores dropped, but not every file in it is the
+    # original (its Money Manager is re-signed by "CN=ReVanced"). So it is used only for apps
+    # whose official certificate is pinned, and only when the file carries that certificate.
+    if patcher.has_signature(pkg_name) and (found := RvbCache(cache.net).fetch(pkg_name, version, arch_f, TEMP_DIR)):
+        result = DownloadResult(path=found, is_bundle=found.suffix in _BUNDLE_SUFFIXES)
+        if zipfile.is_zipfile(found) and _signature_ok(result, pkg_name, patcher):
+            return result, True
+        wpr(f"rvb's cached '{found.name}' is not signed by the official certificate - ignoring it")
+        found.unlink(missing_ok=True)
+
     ordered_sources = [dl_from] + [src for src in entry.dl_urls if src != dl_from] if dl_from else list(entry.dl_urls)
     for src in ordered_sources:
         if src in failed_sources:
@@ -101,7 +111,12 @@ def _download_apk(entry: AppEntry, version: str, arch: str, pkg_name: str, scrap
         url = entry.dl_urls[src]
         pr(f"Downloading '{entry.table}' from '{src}'")
         try:
-            return scrapers[src].download(url, version, stock_apk, arch, entry.dpi, version_code=version_code), True
+            result = scrapers[src].download(url, version, stock_apk, arch, entry.dpi, version_code=version_code)
+            if not zipfile.is_zipfile(result.path):
+                # e.g. an HTML error or challenge page saved under the APK's name
+                result.path.unlink(missing_ok=True)
+                raise ScraperError("downloaded file is not an APK or bundle")
+            return result, True
         except (NetworkError, ScraperError) as exc:
             dpi_str = f", dpi='{entry.dpi}'" if entry.dpi else ""
             epr(f"Failed to fetch '{entry.table}' from '{src}' (version='{version}', arch='{arch}'{dpi_str}): {exc}")
@@ -117,11 +132,22 @@ def _extract_base_apk(apkm: Path, pkg_name: str, dest_dir: Path) -> Path:
         non_split = [n for n in names if n.endswith(".apk") and not Path(n).name.startswith(("config.", "split_"))]
         if len(non_split) == 1:
             candidates.append(non_split[0])
+        elif non_split:  # several feature modules: the base is the biggest of them
+            candidates.append(max(non_split, key=lambda n: names[n].file_size))
         for name in candidates:
             if name in names:
                 zf.extract(name, dest_dir)
                 return dest_dir / name
     raise BuilderError(f"No base APK found inside {apkm.name}")
+
+def _signature_ok(dl_result: DownloadResult, pkg_name: str, patcher: PatcherCLI) -> bool:
+    try:
+        if not dl_result.is_bundle:
+            return patcher.check_signature(dl_result.path, pkg_name)
+        with tempfile.TemporaryDirectory(dir=TEMP_DIR) as tmp_dir:
+            return patcher.check_signature(_extract_base_apk(dl_result.path, pkg_name, Path(tmp_dir)), pkg_name)
+    except (BuilderError, zipfile.BadZipFile):
+        return False
 
 def _verify_sig(dl_result: DownloadResult, pkg_name: str, patcher: PatcherCLI, table: str, skip_sigcheck: bool, strict_sigcheck: bool) -> None:
     if skip_sigcheck:
@@ -150,7 +176,13 @@ def _apply_patch(entry: AppEntry, arch: str, version: str, force: bool, patcher:
     arch_f = arch.replace(" ", "")
     version_f = version.replace(" ", "").lstrip("v")
     auto_patches = patcher.resolve_auto_patches(list_patches)
-    final_args = patcher.build_patch_args(patches=entry.patches, extra_args=entry.patcher_args, arch=arch, auto_patches=auto_patches, exclusive=entry.exclusive_patches, force=force, include_all=PatcherCLI.list_patch_names(list_patches) if entry.inclusive_patches else None)
+    named = {p.lower() for spec in entry.patches.values() for p in (*spec["include"], *spec["exclude"])}
+    if any("microg" in p or "gmscore" in p for p in named):
+        # The config picked its microG patch itself; a bundle may offer several that exclude
+        # each other (e.g. "Add microG-RE support" / "Add original microG support").
+        auto_patches = ("", auto_patches[1])
+    extra_args = [a.replace("{stock_apk}", str(dl_result.path.resolve())) for a in entry.patcher_args]
+    final_args = patcher.build_patch_args(patches=entry.patches, extra_args=extra_args, arch=arch, auto_patches=auto_patches, exclusive=entry.exclusive_patches, force=force, include_all=PatcherCLI.list_patch_names(list_patches) if entry.inclusive_patches else None)
     base_name = file_slug(entry.app_name, entry.brand)
     apk_name = f"{base_name}-v{version_f}-{arch_f}.apk"
     patched_apk = TEMP_DIR / apk_name
@@ -171,7 +203,7 @@ def _build_single(entry: AppEntry, arch: str, label: str, net: NetworkManager, p
         pkg_name, dl_from, failed_sources = _find_pkg_name(entry, scrapers)
         list_patches = patcher.list_patches(pkg_name, experimental=entry.version == "exp")
         version, vcode, force = _resolve_version(entry, patcher, list_patches, pkg_name, dl_from, scrapers, arch)
-        dl_result, from_store = _download_apk(entry, version, arch, pkg_name, scrapers, dl_from, failed_sources, cache, version_code=vcode)
+        dl_result, from_store = _download_apk(entry, version, arch, pkg_name, scrapers, dl_from, failed_sources, cache, patcher, version_code=vcode)
         _verify_sig(dl_result, pkg_name, patcher, label, entry.skip_sigcheck, strict_sigcheck)
         if from_store:  # only after the signature check, so a tampered download never enters the cache
             cache.store(dl_result.path, pkg_name, asset_name(pkg_name, version, arch.replace(" ", ""), dl_result.path.suffix))
