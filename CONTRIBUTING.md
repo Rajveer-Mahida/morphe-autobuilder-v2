@@ -154,6 +154,7 @@ A list of keyword strings to search for in the release notes. If not specified, 
 | `python -m src.scripts.pin_signatures --write` | Adds the official signing certificate of every unpinned app to `sig.txt` (from APKMirror, cross-checked with APKPure). Also available as the **Pin signatures** workflow. |
 | `python -m src.scripts.catalog --repo <owner>/<repo>` | Rewrites `APPS.md` from `config.toml`. |
 | `python -m src.scripts.obtainium --repo <owner>/<repo>` | Prints the Obtainium import links used in `README.md`. |
+| `python -m src.scripts.workflow_choices` | Writes every brand in `config.toml` into the "Run workflow" dropdowns of `ci.yml` and `build.yml` (the importer runs it automatically). |
 
 6. 🔑 **Keystore**:
 

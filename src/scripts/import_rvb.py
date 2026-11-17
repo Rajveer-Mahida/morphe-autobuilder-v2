@@ -286,6 +286,8 @@ def main() -> None:
         tail = text.split(END, 1)[1].lstrip() if END in text else ""
         CONFIG_PATH.write_text(head + block + tail, encoding="utf-8")
         print(f"Wrote {CONFIG_PATH}")
+        from src.scripts.workflow_choices import sync
+        sync()  # new brands must also appear in the "Run workflow" dropdowns
 
 if __name__ == "__main__":
     main()
