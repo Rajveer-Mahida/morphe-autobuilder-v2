@@ -93,24 +93,37 @@ def _build_changelog(tag: str, org: str, name: str, tag_name: str, gitlab: bool,
             changelog += f"[🔗 » Changelog](https://github.com/{clean_src}/releases/tag/{tag_name})\n\n"
     return changelog
 
-def _fetch_single_asset(src: str, tag: str, ver: str, ext: str, cl_dir: Path, net: NetworkManager) -> tuple[Path, str]:
+def _releases_url(src: str) -> tuple[str, bool]:
     gitlab = src.startswith("gitlab:")
     clean_src = _strip_src_prefix(src)
-    org = clean_src.partition("/")[0]
     if gitlab:
-        project = clean_src.replace("/", "%2F")
-        base_url = f"https://gitlab.com/api/v4/projects/{project}/releases"
-    else:
-        base_url = f"https://api.github.com/repos/{clean_src}/releases"
+        return f"https://gitlab.com/api/v4/projects/{clean_src.replace('/', '%2F')}/releases", True
+    return f"https://api.github.com/repos/{clean_src}/releases", False
 
-    release: dict[str, Any] = {}
+def resolve_release_tag(src: str, ver: str, net: NetworkManager) -> str:
+    """The concrete release tag a version spec means right now: 'dev' is the highest tag of
+    any release, 'latest' the newest stable release, anything else is already a tag."""
+    if ver not in ("dev", "latest"):
+        return ver
+
+    base_url, gitlab = _releases_url(src)
     if ver == "dev":
         releases = json.loads(net.get(base_url) if gitlab else net.get(base_url, headers=net.gh_headers))
-        ver = get_highest_ver([r["tag_name"] for r in releases if r.get("tag_name")])
-    elif ver == "latest":
-        latest_url = f"{base_url}/permalink/latest" if gitlab else f"{base_url}/latest"
-        release = json.loads(net.get(latest_url) if gitlab else net.get(latest_url, headers=net.gh_headers))
-        ver = release.get("tag_name", "")
+        return get_highest_ver([r["tag_name"] for r in releases if r.get("tag_name")])
+
+    latest_url = f"{base_url}/permalink/latest" if gitlab else f"{base_url}/latest"
+    release = json.loads(net.get(latest_url) if gitlab else net.get(latest_url, headers=net.gh_headers))
+    if not (tag_name := release.get("tag_name", "")):
+        raise PrebuiltsError(f"No latest release found for {src}")
+    return str(tag_name)
+
+def _fetch_single_asset(src: str, tag: str, ver: str, ext: str, cl_dir: Path, net: NetworkManager) -> tuple[Path, str]:
+    clean_src = _strip_src_prefix(src)
+    org = clean_src.partition("/")[0]
+    base_url, gitlab = _releases_url(src)
+
+    release: dict[str, Any] = {}
+    ver = resolve_release_tag(src, ver, net)
 
     if file := _find_cached(cl_dir, ver, ext):
         tag_name = _tag_from_filename(file)

@@ -55,7 +55,21 @@ def _require_java(min_version: int = 21) -> None:
     if version < min_version:
         abort(f"Java {version} found, but Java {min_version}+ is required")
 
-def _build(target_apps: list[str] | None = None, arch_override: str | None = None, dpi_override: str | None = None) -> int:
+def _parse_pin(pin: str) -> tuple[str, str, str]:
+    """'github:owner/repo@latest=v2.3.0' -> (source, spec, tag)."""
+    lhs, _, tag = pin.rpartition("=")
+    source, _, spec = lhs.rpartition("@")
+    if not (source and spec and tag):
+        abort(f"Invalid --pin-patches value '{pin}', expected SOURCE@SPEC=TAG")
+    return source, spec, tag
+
+def _apply_pin(entry: AppEntry, source: str, spec: str, tag: str) -> AppEntry:
+    current = entry.patches.get(source)
+    if current is None or current["version"] != spec:
+        return entry
+    return replace(entry, patches=entry.patches | {source: current | {"version": tag}})
+
+def _build(target_apps: list[str] | None = None, arch_override: str | None = None, dpi_override: str | None = None, pin: str | None = None) -> int:
     _require_java()
     data = load_toml(CONFIG_PATH)
     main_cfg = parse_config(data)
@@ -74,6 +88,11 @@ def _build(target_apps: list[str] | None = None, arch_override: str | None = Non
 
     if dpi_override is not None:
         entries = [replace(e, dpi=dpi_override) for e in entries]
+
+    if pin is not None:
+        source, spec, tag = _parse_pin(pin)
+        entries = [_apply_pin(e, source, spec, tag) for e in entries]
+        pr(f"Pinned '{source}' ({spec}) to '{tag}'")
 
     TEMP_DIR.mkdir(parents=True, exist_ok=True)
     BUILD_DIR.mkdir(parents=True, exist_ok=True)
@@ -133,13 +152,18 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Override target screen DPI (e.g. nodpi, 480dpi, all, or comma-separated list)",
     )
     parser.add_argument(
+        "--pin-patches",
+        metavar="SOURCE@SPEC=TAG",
+        help="Build apps whose patch source SOURCE is set to SPEC (e.g. latest) from release TAG instead",
+    )
+    parser.add_argument(
         "--clear",
         action="store_true",
         help="Remove build/, temp/, and build.md instead of building",
     )
     args = parser.parse_args(argv)
-    if args.clear and any(v is not None for v in (args.target, args.arch, args.dpi)):
-        parser.error("--clear cannot be used together with --target, --arch, or --dpi")
+    if args.clear and any(v is not None for v in (args.target, args.arch, args.dpi, args.pin_patches)):
+        parser.error("--clear cannot be used together with --target, --arch, --dpi, or --pin-patches")
     return args
 
 def main() -> None:
@@ -149,7 +173,7 @@ def main() -> None:
         sys.exit(_clear())
 
     _load_dotenv()
-    sys.exit(_build(target_apps=args.target, arch_override=args.arch, dpi_override=args.dpi))
+    sys.exit(_build(target_apps=args.target, arch_override=args.arch, dpi_override=args.dpi, pin=args.pin_patches))
 
 if __name__ == "__main__":
     main()

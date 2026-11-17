@@ -22,6 +22,8 @@ from curl_cffi import requests as curl_requests
 from src.core.logger import IS_GITHUB, abort, epr, pr
 
 _BACKTICK_RE = re.compile(r"`([^`]+)`")
+# A download-table row: "| Music | `9.30.53` | `arm64-v8a` | [**⬇️ APK**](url) |"
+_ROW_RE = re.compile(r"^\| (?P<name>[^|]+?) \| (?P<ver>`[^`]+`) \| (?P<arch>[^|]+?) \| (?:\[[^\]]*\]\((?P<url>[^)]+)\)|—) \|$")
 
 
 def _require_ci(script: str) -> None:
@@ -29,26 +31,25 @@ def _require_ci(script: str) -> None:
         abort(f"'{script}' is only available in GitHub Actions")
 
 def _parse_final_md(final_md: Path) -> tuple[list[str], str, list[str]]:
+    """Read the release notes written by src.scripts.logs back into Telegram lines."""
     green_lines: list[str] = []
     microg_line: str = ""
     changelog_lines: list[str] = []
     for line in final_md.read_text(encoding="utf-8").splitlines():
         stripped = line.strip()
-        if stripped.startswith("- 🟢"):
-            green_lines.append(_BACKTICK_RE.sub(r"\1", stripped.removeprefix("- ")))
-        elif not microg_line and stripped.startswith("▶️"):
-            microg_line = stripped
-        elif stripped.startswith("[🔗"):
-            if m := re.search(r"\[(.*?)]\((.*?)\)", stripped):
-                link_text, url = m.group(1), m.group(2)
-                org = url.split("/")[3] if url.count("/") >= 3 else ""
-                changelog_lines.append(f"[{link_text} ({org})]({url})" if org else stripped)
-            else:
-                changelog_lines.append(stripped)
+        if stripped.startswith("|") and (m := _ROW_RE.match(stripped)):
+            name, version, arch = m["name"].strip(), _BACKTICK_RE.sub(r"\1", m["ver"]), _BACKTICK_RE.sub(r"\1", m["arch"]).strip()
+            label = f"{name} ({arch})" if arch != "Universal" else name
+            green_lines.append(f"🟢 » {label}: [{version}]({m['url']})" if m["url"] else f"🟢 » {label}: {version}")
+        elif stripped.startswith("| Patches |") and (link := re.search(r"\[`([^`]+)`]\(([^)]+)\)", stripped)):
+            changelog_lines.append(f"[🔗 » Changelog ({link.group(1)})]({link.group(2)})")
+        elif not microg_line and "[MicroG-RE](" in stripped and (link := re.search(r"\[MicroG-RE]\(([^)]+)\)", stripped)):
+            microg_line = f"▶️ » Install [MicroG-RE]({link.group(1)}) to enable Google account sign-in for supported apps"
     return green_lines, microg_line, changelog_lines
 
 def _build_message(brand: str, green_lines: list[str], microg_line: str, changelog_lines: list[str]) -> str:
-    parts: list[str] = [f"*New build! ({brand.capitalize()})*", ""]
+    title = os.getenv("RELEASE_TITLE") or brand.capitalize()
+    parts: list[str] = [f"*New build: {title}*", ""]
     parts.extend(green_lines)
     if microg_line:
         parts.extend(["", microg_line])

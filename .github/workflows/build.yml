@@ -30,7 +30,9 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       version: ${{ steps.version.outputs.version }}
+      title: ${{ steps.version.outputs.title }}
       prerelease: ${{ steps.set-matrix.outputs.prerelease }}
+      patches_pin: ${{ steps.set-matrix.outputs.patches_pin }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -48,19 +50,6 @@ jobs:
       - name: Install dependencies
         run: uv sync --frozen
 
-      - name: Prepare version and draft release
-        id: version
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          VER="$(date +%y.%m.%d)-${{ inputs.patch_source }}"
-          echo "version=${VER}" >> "$GITHUB_OUTPUT"
-          if gh release view "$VER" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release edit "$VER" --draft --repo "$GITHUB_REPOSITORY"
-          else
-            gh release create "$VER" --draft --title "$VER" --notes "" --repo "$GITHUB_REPOSITORY"
-          fi
-
       - name: Set matrix based on patch source
         id: set-matrix
         env:
@@ -70,6 +59,34 @@ jobs:
           RESULT="$(uv run python -m src.scripts.matrix --source '${{ inputs.patch_source }}')"
           echo "matrix=$(echo "$RESULT" | jq -c '{include}')" >> "$GITHUB_OUTPUT"
           echo "prerelease=$(echo "$RESULT" | jq -r '.prerelease')" >> "$GITHUB_OUTPUT"
+          echo "patches_tag=$(echo "$RESULT" | jq -r '.patches_tag')" >> "$GITHUB_OUTPUT"
+          echo "patches_pin=$(echo "$RESULT" | jq -r '"\(.patches_source)@\(.patches_spec)=\(.patches_tag)"')" >> "$GITHUB_OUTPUT"
+
+      # Releases are named after the patch version they were built from: morphe-2.3.0.
+      # A rebuild of the same patch version (a rerun, or an app update) reuses that
+      # release, and its tag is moved to the commit being built so the tag never points
+      # at code older than the APKs it holds.
+      - name: Prepare version and draft release
+        id: version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SOURCE: ${{ inputs.patch_source }}
+          PATCHES_TAG: ${{ steps.set-matrix.outputs.patches_tag }}
+        run: |
+          PATCHES_VER="${PATCHES_TAG#v}"
+          VER="${SOURCE}-${PATCHES_VER}"
+          TITLE="${SOURCE^} Patches v${PATCHES_VER}"
+          echo "version=${VER}" >> "$GITHUB_OUTPUT"
+          echo "title=${TITLE}" >> "$GITHUB_OUTPUT"
+          if gh release view "$VER" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release edit "$VER" --draft --target "$GITHUB_SHA" --repo "$GITHUB_REPOSITORY"
+            if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$VER" >/dev/null 2>&1; then
+              gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/$VER" -f sha="$GITHUB_SHA" -F force=true >/dev/null
+              echo "Moved tag '$VER' to $GITHUB_SHA"
+            fi
+          else
+            gh release create "$VER" --draft --target "$GITHUB_SHA" --title "$TITLE" --notes "" --repo "$GITHUB_REPOSITORY"
+          fi
 
   run:
     needs: prepare
@@ -112,7 +129,8 @@ jobs:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
           KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASS }}
           KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
-        run: uv run main.py --target "${{ matrix.id }}" ${{ matrix.arch && format('--arch {0}', matrix.arch) || '' }}
+          PATCHES_PIN: ${{ needs.prepare.outputs.patches_pin }}
+        run: uv run main.py --target "${{ matrix.id }}" ${{ matrix.arch && format('--arch {0}', matrix.arch) || '' }} --pin-patches "$PATCHES_PIN"
 
       - name: Upload APKs to draft release
         if: always()
@@ -179,7 +197,8 @@ jobs:
           TAG: ${{ needs.prepare.outputs.version }}
         run: |
           mkdir -p logs
-          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern "build-*.md" --dir logs
+          # A rerun in which every app failed uploads no log; the release then keeps its old notes.
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern "build-*.md" --dir logs || echo "No new build logs"
           gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[] | select(.name | startswith("build-")) | .apiUrl' | xargs -I{} gh api --method DELETE "{}"
 
       - name: Combine logs and finalize release
@@ -188,19 +207,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ needs.prepare.outputs.version }}
           PRERELEASE: ${{ needs.prepare.outputs.prerelease }}
+          TITLE: ${{ needs.prepare.outputs.title }}
         run: |
           uv run python -m src.scripts.logs --logs-dir logs | sed "s/{TAG}/$TAG/g" > final.md
-          if [ "$PRERELEASE" = "true" ]; then
-            gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --draft=false --prerelease --title "$TAG" --notes-file final.md
-          else
-            gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --draft=false --title "$TAG" --notes-file final.md
-          fi
+          ARGS=(--draft=false --title "$TITLE" "--prerelease=${PRERELEASE:-false}")
+          if [ -s final.md ]; then ARGS+=(--notes-file final.md); fi
+          gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" "${ARGS[@]}"
 
       - name: Send Telegram notification
         if: steps.check.outputs.has_apks == 'true' && env.TG_TOKEN != '' && env.TG_CHAT != ''
         env:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
+          RELEASE_TITLE: ${{ needs.prepare.outputs.title }}
         run: uv run python -m src.scripts.telegram --brand '${{ inputs.patch_source }}'
 
       - name: Delete empty draft if no APKs
@@ -208,4 +227,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ needs.prepare.outputs.version }}
-        run: gh release delete "$TAG" --repo "$GITHUB_REPOSITORY" --yes || true
+        run: gh release delete "$TAG" --repo "$GITHUB_REPOSITORY" --yes --cleanup-tag || true

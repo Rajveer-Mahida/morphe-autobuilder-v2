@@ -174,6 +174,17 @@ class PatcherCLI:
             output_apk.unlink(missing_ok=True)
             raise PatcherError(f"Patching '{stock_apk.name}' failed:\n{exc}") from exc
 
+    def signer_sha256(self, apk: Path) -> str | None:
+        """SHA-256 of the certificate that signed this APK, as AA:BB:..., or None if unreadable."""
+        try:
+            output = _run_java("--enable-native-access=ALL-UNNAMED", "-jar", self.apksigner, "verify", "--print-certs", apk)
+        except PatcherError:
+            return None
+        if m := re.search(r"certificate SHA-256 digest:\s*([0-9a-fA-F]{64})", output):
+            digest = m.group(1).upper()
+            return ":".join(digest[i:i + 2] for i in range(0, 64, 2))
+        return None
+
     def check_signature(self, apk: Path, pkg_name: str) -> bool:
         expected = self._signatures.get(pkg_name)
         if not expected:

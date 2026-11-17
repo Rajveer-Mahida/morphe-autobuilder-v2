@@ -22,7 +22,7 @@ from typing import Any
 from src.core.config import CONFIG_PATH, AppEntry, load_toml, parse_app_entries, parse_config
 from src.core.logger import IS_GITHUB, abort, epr
 from src.core.network import NetworkManager, ResourceNotFoundError
-from src.core.prebuilts import get_highest_ver, ver_key
+from src.core.prebuilts import get_highest_ver, resolve_release_tag, ver_key
 
 _APK_ASSET_RE = re.compile(r"^([a-z0-9\-]+)-v(.+?)(?:-(?:all|arm64-v8a|armeabi-v7a|x86_64|x86))?\.apk$", re.IGNORECASE)
 
@@ -50,6 +50,15 @@ def _fetch_latest_release(source: str, net: NetworkManager, version: str = "late
         upstream_date = str(upstream_rel.get("published_at") or "")
     return changelog_text, upstream_date
 
+_OLD_TAG_RE = re.compile(r"^\d{2}\.\d{2}\.\d{2}-")
+
+def release_brand(tag: str) -> str:
+    """Brand of one of our release tags: 'morphe-2.3.0' -> 'morphe'.
+    Releases made before the switch to patch-version tags read '26.11.17-morphe'."""
+    if _OLD_TAG_RE.match(tag):
+        return tag.partition("-")[2].lower()
+    return tag.partition("-")[0].lower()
+
 def _fetch_our_releases(repo: str, net: NetworkManager) -> tuple[dict[str, str], dict[str, dict[str, str]]]:
     our_releases_by_brand: dict[str, str] = {}
     built_versions_by_brand: dict[str, dict[str, str]] = {}
@@ -58,7 +67,7 @@ def _fetch_our_releases(repo: str, net: NetworkManager) -> tuple[dict[str, str],
         releases: list[dict[str, Any]] = json.loads(our_releases_raw)
         for rel in releases:
             tag = str(rel.get("tag_name") or "")
-            brand = tag.partition("-")[2].lower()
+            brand = release_brand(tag)
             if not brand:
                 continue
             if brand not in our_releases_by_brand:
@@ -174,7 +183,21 @@ def get_matrix(source: str) -> None:
 
     if not include:
         abort(f"No apps found for patch source '{source}'")
-    print(json.dumps({"include": include, "prerelease": is_prerelease}, ensure_ascii=False))
+
+    # The release is named after the patch version, so resolve it once here and hand the
+    # same tag to every build job (as a pin) - a patch release landing mid-run must not
+    # leave the release named after one version and built from another.
+    patches_spec = "dev" if is_prerelease else next(
+        (e.patches[patches_source]["version"] for e in staged if patches_source in e.patches), "latest")
+    with NetworkManager() as net:
+        patches_tag = resolve_release_tag(patches_source, patches_spec, net)
+    print(json.dumps({
+        "include": include,
+        "prerelease": is_prerelease,
+        "patches_source": patches_source,
+        "patches_spec": patches_spec,
+        "patches_tag": patches_tag,
+    }, ensure_ascii=False))
 
 def check_builds_needed(force_all: bool = False) -> None:
     seen: dict[str, str] = {}

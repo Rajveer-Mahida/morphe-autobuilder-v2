@@ -166,7 +166,10 @@ def _build_single(entry: AppEntry, arch: str, label: str, net: NetworkManager, p
         pr(f"Built {label}: '{apk_output}'")
         github_asset_name = re.sub(r"\.+", ".", re.sub(r"[^a-zA-Z0-9@+\-_.]", ".", apk_output.name))
         ver_str = f"[`{version}`](https://github.com/{os.getenv('GITHUB_REPOSITORY')}/releases/download/{{TAG}}/{github_asset_name})" if IS_GITHUB else f"`{version}`"
-        return f"- 🟢 » {label}: {ver_str}"
+        line = f"- 🟢 » {label}: {ver_str}"
+        if cert := patcher.signer_sha256(apk_output):
+            line += f"\n> 🔐 » Signer: `{cert}`"
+        return line
     except (BuilderError, PatcherError, ScraperError, NetworkError, SignatureError) as exc:
         if isinstance(exc, SignatureError):
             _failed_signatures.add(entry.table)
