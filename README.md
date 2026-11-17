@@ -34,16 +34,16 @@ Each patch source gets its own releases, named after the patch version they were
 
 | App | Architecture | Obtainium |
 | :--- | :---: | :---: |
-| <img src="https://img.shields.io/badge/YouTube-FF0000?style=flat-square&logo=youtube&logoColor=white" alt="YouTube"> | Universal | [Stable][yt-morphe] · [Experimental][yt-exp-morphe] |
-| <img src="https://img.shields.io/badge/YouTube%20Music-FF0000?style=flat-square&logo=youtubemusic&logoColor=white" alt="YouTube Music"> | `arm64-v8a` · `armeabi-v7a` | [Stable][music-morphe] · [Experimental][music-exp-morphe] |
-| <img src="https://img.shields.io/badge/Reddit-FF4500?style=flat-square&logo=reddit&logoColor=white" alt="Reddit"> | Universal | [Stable][reddit-morphe] · [Experimental][reddit-exp-morphe] |
+| **YouTube** | Universal | [Stable][yt-morphe] · [Experimental][yt-exp-morphe] |
+| **YouTube Music** | `arm64-v8a` · `armeabi-v7a` | [Stable][music-morphe] · [Experimental][music-exp-morphe] |
+| **Reddit** | Universal | [Stable][reddit-morphe] · [Experimental][reddit-exp-morphe] |
 
 ### 🧩 [Piko](https://github.com/crimera/piko) &nbsp;·&nbsp; [All releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=piko-&expanded=true)
 
 | App | Architecture | Obtainium |
 | :--- | :---: | :---: |
-| <img src="https://img.shields.io/badge/X-000000?style=flat-square&logo=x&logoColor=white" alt="X"> | Universal | [X branding][x-piko] · [Twitter branding][twitter-piko] |
-| <img src="https://img.shields.io/badge/Instagram-FF0069?style=flat-square&logo=instagram&logoColor=white" alt="Instagram"> | `arm64-v8a` | [Import][instagram-piko] |
+| **X** | Universal | [X branding][x-piko] · [Twitter branding][twitter-piko] |
+| **Instagram** | `arm64-v8a` | [Import][instagram-piko] |
 
 > [!NOTE]
 > **Experimental** builds use the newest app version the patches support, including versions the patch authors still mark as experimental. Pick **Stable** unless you want to try new app releases early.
