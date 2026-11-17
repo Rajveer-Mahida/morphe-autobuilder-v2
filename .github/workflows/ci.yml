@@ -9,6 +9,11 @@ on:
         required: true
         type: boolean
         default: false
+      only:
+        description: 'Only these patch sources, space-separated (e.g. "morphe piko"). Empty = all'
+        required: false
+        type: string
+        default: ''
 
 permissions:
   contents: write
@@ -40,12 +45,19 @@ jobs:
         id: get-matrix
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FORCE: ${{ inputs.force_build }}
+          ONLY: ${{ inputs.only }}
         run: |
-          if [ "${{ inputs.force_build }}" = "true" ]; then
-            echo "build_matrix=$(uv run python -m src.scripts.matrix --force)" >> "$GITHUB_OUTPUT"
+          if [ "$FORCE" = "true" ]; then
+            MATRIX="$(uv run python -m src.scripts.matrix --force)"
           else
-            echo "build_matrix=$(uv run python -m src.scripts.matrix)" >> "$GITHUB_OUTPUT"
+            MATRIX="$(uv run python -m src.scripts.matrix)"
           fi
+          if [ -n "$ONLY" ]; then
+            MATRIX="$(jq -c --arg only "$ONLY" '($only | ascii_downcase | split(" ") | map(select(. != ""))) as $keep | map(select(. as $b | $keep | index($b)))' <<<"$MATRIX")"
+          fi
+          echo "Building: $MATRIX"
+          echo "build_matrix=$MATRIX" >> "$GITHUB_OUTPUT"
 
       - name: Notify skipped build
         if: steps.get-matrix.outputs.build_matrix == '[]'
@@ -57,22 +69,19 @@ jobs:
         run: |
           gh run list -L400 --repo "$GITHUB_REPOSITORY" --json databaseId -q '.[].databaseId' | tail -n+91 | xargs -IID gh api "repos/$GITHUB_REPOSITORY/actions/runs/ID" -X DELETE || true
 
-  build-morphe:
-    name: build (Morphe)
+  # One build per patch source that has something new. The list comes from config.toml
+  # (every brand), so adding a patch source needs no edit here.
+  build:
+    name: build (${{ matrix.brand }})
     needs: check-versions
-    if: contains(fromJSON(needs.check-versions.outputs.build_matrix), 'morphe')
+    if: needs.check-versions.outputs.build_matrix != '[]' && needs.check-versions.outputs.build_matrix != ''
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        brand: ${{ fromJSON(needs.check-versions.outputs.build_matrix) }}
     uses: ./.github/workflows/build.yml
     with:
-      patch_source: 'morphe'
-      filter_changelog: ${{ inputs.force_build != true }}
-    secrets: inherit
-
-  build-piko:
-    name: build (Piko)
-    needs: check-versions
-    if: contains(fromJSON(needs.check-versions.outputs.build_matrix), 'piko')
-    uses: ./.github/workflows/build.yml
-    with:
-      patch_source: 'piko'
+      patch_source: ${{ matrix.brand }}
       filter_changelog: ${{ inputs.force_build != true }}
     secrets: inherit

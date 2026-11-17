@@ -3,13 +3,10 @@ on:
   workflow_dispatch:
     inputs:
       patch_source:
-        description: 'Select patch source'
+        description: 'Patch source (the brand in config.toml, e.g. morphe, piko, revanced-extended)'
         required: true
         default: 'morphe'
-        type: choice
-        options:
-          - morphe
-          - piko
+        type: string
   workflow_call:
     inputs:
       patch_source:
@@ -60,6 +57,7 @@ jobs:
           echo "matrix=$(echo "$RESULT" | jq -c '{include}')" >> "$GITHUB_OUTPUT"
           echo "prerelease=$(echo "$RESULT" | jq -r '.prerelease')" >> "$GITHUB_OUTPUT"
           echo "patches_tag=$(echo "$RESULT" | jq -r '.patches_tag')" >> "$GITHUB_OUTPUT"
+          echo "title=$(echo "$RESULT" | jq -r '.title')" >> "$GITHUB_OUTPUT"
           echo "patches_pin=$(echo "$RESULT" | jq -r '"\(.patches_source)@\(.patches_spec)=\(.patches_tag)"')" >> "$GITHUB_OUTPUT"
 
       # Releases are named after the patch version they were built from: morphe-2.3.0.
@@ -72,10 +70,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SOURCE: ${{ inputs.patch_source }}
           PATCHES_TAG: ${{ steps.set-matrix.outputs.patches_tag }}
+          TITLE: ${{ steps.set-matrix.outputs.title }}
         run: |
           PATCHES_VER="${PATCHES_TAG#v}"
           VER="${SOURCE}-${PATCHES_VER}"
-          TITLE="${SOURCE^} Patches v${PATCHES_VER}"
           echo "version=${VER}" >> "$GITHUB_OUTPUT"
           echo "title=${TITLE}" >> "$GITHUB_OUTPUT"
           if gh release view "$VER" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then

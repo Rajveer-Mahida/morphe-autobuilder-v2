@@ -1,0 +1,49 @@
+name: Pin signatures
+# Records the official signing certificate of every app in config.toml that sig.txt
+# does not cover yet (see src/scripts/pin_signatures.py), then commits sig.txt.
+# Run it after adding apps. APKMirror rate-limits a long crawl, so a run may stop
+# early; running it again continues where it stopped.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pin-signatures
+  cancel-in-progress: false
+
+jobs:
+  pin:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
+        with:
+          python-version: "3.14"
+          enable-cache: true
+          quiet: true
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Start API Solver in background
+        run: docker run -d -p 8000:8000 ghcr.io/sarperavci/cloudflarebypassforscraping:latest
+
+      - name: Pin signatures
+        run: uv run python -m src.scripts.pin_signatures --write
+
+      - name: Commit sig.txt
+        run: |
+          if git diff --quiet -- sig.txt; then
+            echo "No new pins"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add sig.txt
+          git commit -m "chore(sig): pin signing certificates of $(git diff --cached --numstat sig.txt | cut -f1) more apps"
+          git push
