@@ -115,7 +115,7 @@ apkmirror-dlurl = "https://www.apkmirror.com/apk/jio-platforms-limited/jiotv-and
 "github:durgesh0505/chiggi_morphe_patches" = []
 
 # >>> imported from nullcpy/rvb - regenerate with `python -m src.scripts.import_rvb --write` >>>
-# 221 apps from https://github.com/nullcpy/rvb/tree/data/configs/patches (GPLv3)
+# 220 apps from https://github.com/nullcpy/rvb/tree/data/configs/patches (GPLv3)
 
 # ---- adobo: github:jkennethcarino/adobo ----
 
@@ -2027,16 +2027,6 @@ apkmirror-dlurl = "https://www.apkmirror.com/apk/fing-limited/fing-network-tools
 uptodown-dlurl = "https://fing-network-tools.en.uptodown.com/android"
 
 [Fing-Paresh.patches]
-"gitlab:Paresh-Maheshwari/paresh-patches" = []
-
-[ProtonVPN-Paresh]
-app-name = "Proton VPN"
-brand = "paresh"
-arch = "both"
-apkmirror-dlurl = "https://www.apkmirror.com/apk/proton-technologies-ag/protonvpn-secure-and-free-vpn"
-uptodown-dlurl = "https://protonvpn.en.uptodown.com/android"
-
-[ProtonVPN-Paresh.patches]
 "gitlab:Paresh-Maheshwari/paresh-patches" = []
 
 [SDMaid-Paresh]

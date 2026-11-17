@@ -19,7 +19,7 @@ import zipfile
 from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from pathlib import Path
 
-from src.core.config import BUILD_DIR, TEMP_DIR, AppEntry, Config
+from src.core.config import BUILD_DIR, TEMP_DIR, AppEntry, Config, file_slug
 from src.core.logger import IS_GITHUB, epr, is_interrupted, pr, wpr
 from src.core.network import NetworkError, NetworkManager
 from src.core.patcher import PatcherCLI, PatcherError, SignatureError
@@ -140,7 +140,7 @@ def _apply_patch(entry: AppEntry, arch: str, version: str, force: bool, patcher:
     version_f = version.replace(" ", "").lstrip("v")
     auto_patches = patcher.resolve_auto_patches(list_patches)
     final_args = patcher.build_patch_args(patches=entry.patches, extra_args=entry.patcher_args, arch=arch, auto_patches=auto_patches, exclusive=entry.exclusive_patches, force=force, include_all=PatcherCLI.list_patch_names(list_patches) if entry.inclusive_patches else None)
-    base_name = f"{entry.app_name.lower().replace(" ", "-")}-{entry.brand.lower().replace(" ", "-")}"
+    base_name = file_slug(entry.app_name, entry.brand)
     apk_name = f"{base_name}-v{version_f}-{arch_f}.apk"
     patched_apk = TEMP_DIR / apk_name
 

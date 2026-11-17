@@ -28,7 +28,7 @@
 
 ## 📱 Apps
 
-**232 apps from 73 patch sources.** The most popular are below; the full list is in [**APPS.md**](APPS.md). Each patch source gets its own releases, named after the patch version they were built from - `morphe-2.3.0`, `revanced-extended-4.3.0`.
+**231 apps from 73 patch sources.** The most popular are below; the full list is in [**APPS.md**](APPS.md). Each patch source gets its own releases, named after the patch version they were built from - `morphe-2.3.0`, `revanced-extended-4.3.0`.
 
 ### 🧩 [Morphe](https://github.com/MorpheApp/morphe-patches) &nbsp;·&nbsp; [All releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=morphe-&expanded=true)
 

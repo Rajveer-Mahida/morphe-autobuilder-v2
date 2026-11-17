@@ -1,6 +1,6 @@
 # 📚 All apps
 
-Every app this repository builds: **232 apps** from **73 patch sources**.
+Every app this repository builds: **231 apps** from **73 patch sources**.
 Each patch source publishes its own releases, tagged `<source>-<patch version>`.
 
 > [!NOTE]
@@ -12,8 +12,8 @@ Each patch source publishes its own releases, tagged `<source>-<patch version>`.
 | [Hoodles](#hoodles) | 23 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=hoodles-&expanded=true) |
 | [Hooman](#hooman) | 14 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=hooman-&expanded=true) |
 | [Hxreborn](#hxreborn) | 14 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=hxreborn-&expanded=true) |
-| [Paresh](#paresh) | 11 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=paresh-&expanded=true) |
 | [Ajstrick81](#ajstrick81) | 10 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=ajstrick81-&expanded=true) |
+| [Paresh](#paresh) | 10 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=paresh-&expanded=true) |
 | [DeVanced](#devanced) | 8 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=devanced-&expanded=true) |
 | [Bearinmindcat](#bearinmindcat) | 7 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=bearinmindcat-&expanded=true) |
 | [BholeyKaBhakt](#bholeykabhakt) | 6 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=bholeykabhakt-&expanded=true) |
@@ -190,25 +190,6 @@ Patches: [hxreborn/morphe-patches](https://github.com/hxreborn/morphe-patches) �
 | Showly | `arm64-v8a` · `armeabi-v7a` |
 | TeraBox | `arm64-v8a` · `armeabi-v7a` |
 
-<a id="paresh"></a>
-## Paresh
-
-Patches: [Paresh-Maheshwari/paresh-patches](https://gitlab.com/Paresh-Maheshwari/paresh-patches) · [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=paresh-&expanded=true)
-
-| App | Architecture |
-| :--- | :---: |
-| Cricbuzz | `arm64-v8a` · `armeabi-v7a` |
-| Eyecon | `arm64-v8a` · `armeabi-v7a` |
-| Fing | `arm64-v8a` · `armeabi-v7a` |
-| Lumina Wallpapers | `arm64-v8a` · `armeabi-v7a` |
-| MacroDroid | `arm64-v8a` · `armeabi-v7a` |
-| Plus Messenger | `arm64-v8a` · `armeabi-v7a` |
-| Proton VPN | `arm64-v8a` · `armeabi-v7a` |
-| SD Maid 2/SE | `arm64-v8a` · `armeabi-v7a` |
-| Telegram FOSS | `arm64-v8a` · `armeabi-v7a` |
-| TickTick | `arm64-v8a` · `armeabi-v7a` |
-| Truecaller | `arm64-v8a` · `armeabi-v7a` |
-
 <a id="ajstrick81"></a>
 ## Ajstrick81
 
@@ -226,6 +207,24 @@ Patches: [ajstrick81/morphe-androidtv-patches](https://github.com/ajstrick81/mor
 | Tubi Android TV | Universal |
 | Twitch Android TV | Universal |
 | ViX Android TV | Universal |
+
+<a id="paresh"></a>
+## Paresh
+
+Patches: [Paresh-Maheshwari/paresh-patches](https://gitlab.com/Paresh-Maheshwari/paresh-patches) · [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=paresh-&expanded=true)
+
+| App | Architecture |
+| :--- | :---: |
+| Cricbuzz | `arm64-v8a` · `armeabi-v7a` |
+| Eyecon | `arm64-v8a` · `armeabi-v7a` |
+| Fing | `arm64-v8a` · `armeabi-v7a` |
+| Lumina Wallpapers | `arm64-v8a` · `armeabi-v7a` |
+| MacroDroid | `arm64-v8a` · `armeabi-v7a` |
+| Plus Messenger | `arm64-v8a` · `armeabi-v7a` |
+| SD Maid 2/SE | `arm64-v8a` · `armeabi-v7a` |
+| Telegram FOSS | `arm64-v8a` · `armeabi-v7a` |
+| TickTick | `arm64-v8a` · `armeabi-v7a` |
+| Truecaller | `arm64-v8a` · `armeabi-v7a` |
 
 <a id="devanced"></a>
 ## DeVanced

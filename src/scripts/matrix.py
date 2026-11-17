@@ -19,7 +19,7 @@ import re
 from datetime import datetime
 from typing import Any
 
-from src.core.config import CONFIG_PATH, AppEntry, load_toml, parse_app_entries, parse_config
+from src.core.config import CONFIG_PATH, AppEntry, file_slug, load_toml, parse_app_entries, parse_config
 from src.core.logger import IS_GITHUB, abort, epr
 from src.core.network import NetworkManager, ResourceNotFoundError
 from src.core.prebuilts import get_highest_ver, resolve_release_tag, ver_key
@@ -161,7 +161,7 @@ def get_matrix(source: str) -> None:
             include: list[dict[str, str]] = []
 
             for entry in staged:
-                base_name = f"{entry.app_name.lower().replace(' ', '-')}-{source_lower}"
+                base_name = file_slug(entry.app_name, source_lower)
                 built_ver = brand_built.get(base_name)
                 has_new_apk = False
                 if entry.track_apk and entry.dl_urls:
@@ -276,7 +276,7 @@ def check_builds_needed(force_all: bool = False) -> None:
             for app in entries_by_brand.get(brand, []):
                 if not app.track_apk or not app.dl_urls:
                     continue
-                base_name = f"{app.app_name.lower().replace(' ', '-')}-{brand}"
+                base_name = file_slug(app.app_name, brand)
                 built_ver = brand_built.get(base_name)
                 source_ver = _fetch_latest_source_version(app, net, scrapers)
                 if source_ver and is_newer_version(source_ver, built_ver):

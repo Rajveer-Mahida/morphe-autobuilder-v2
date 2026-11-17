@@ -48,6 +48,12 @@ KNOWN_BRANDS: dict[str, tuple[str, str]] = {
 # rvb's default is "both": apps with native code are only published as per-ABI APKs, which a
 # universal ("all") build cannot download.
 _ARCH = {"arm-v7a": "armeabi-v7a", "arm64-v8a": "arm64-v8a", "x86": "x86", "x86_64": "x86_64", "all": "all", "auto": "both", "both": "both"}
+# rvb entries known not to build, with the reason (checked against rvb's own releases).
+BROKEN: dict[str, str] = {
+    "ProtonVPN-Paresh": "Paresh's 'Proton VPN Premium' patch no longer matches the app it claims to support "
+                        "(fingerprint GetHasSubscription); rvb does not publish it either. Proton VPN is still "
+                        "built from hoodles and hxreborn.",
+}
 _NOISE = {"morphe", "patches", "patch", "revanced", "the", "for", "mod", "mods"}
 
 
@@ -185,6 +191,9 @@ def convert(net: NetworkManager) -> tuple[str, Report]:
         label = f"{app['_file']}:{app['_table']}"
         if not app.get("enabled", True):
             report.skip("disabled in rvb", label)
+            continue
+        if app["_table"] in BROKEN:
+            report.skip("known broken upstream", f"{label}: {BROKEN[app['_table']]}")
             continue
         if cli := app.get("cli-source"):
             report.skip(f"needs another patcher ({cli})", label)

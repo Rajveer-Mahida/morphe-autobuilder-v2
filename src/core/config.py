@@ -13,6 +13,7 @@
 # ---------------------------------------------------------
 
 import os
+import re
 import shlex
 import tomllib
 from dataclasses import dataclass
@@ -62,6 +63,11 @@ class AppEntry:
     enabled: bool
     changelog_keywords: list[str]
     track_apk: bool
+
+def file_slug(*parts: str) -> str:
+    """Asset-name stem for an app: 'SD Maid 2/SE' + 'Paresh' -> 'sd-maid-2-se-paresh'.
+    Only letters, digits and dashes, so a name can never become a path or break a link."""
+    return re.sub(r"[^a-z0-9]+", "-", " ".join(parts).lower()).strip("-")
 
 def load_toml(path: Path) -> dict[str, Any]:
     with path.open("rb") as fp:
