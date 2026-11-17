@@ -25,24 +25,15 @@ from src.core.network import NetworkError, NetworkManager
 from src.core.patcher import PatcherCLI, PatcherError, SignatureError
 from src.core.prebuilts import APKSIGNER, fetch_cli, fetch_mpp, get_highest_ver
 from src.scrapers.base import BaseScraper, DownloadResult, ScraperError
+from src.scrapers.registry import make_scraper
 
 _failed_signatures: set[str] = set()
 _BLOCK_RE: re.Pattern[str] = re.compile(r"^> ⚙️ » (CLI|Patches):.*?(?=^> ⚙️ »|\Z)", re.MULTILINE | re.DOTALL)
+_BUNDLE_SUFFIXES: tuple[str, ...] = (".apkm", ".xapk", ".apks")
 
 
 class BuilderError(Exception):
     pass
-
-def _make_scraper(source: str, net: NetworkManager) -> BaseScraper:
-    from src.scrapers.apkmirror import APKMirrorScraper
-    from src.scrapers.github import GitHubScraper
-    match source:
-        case "apkmirror":
-            return APKMirrorScraper(net)
-        case "github":
-            return GitHubScraper(net)
-        case _:
-            raise ValueError(f"Unknown APK source: {source!r}")
 
 def _find_pkg_name(entry: AppEntry, scrapers: dict[str, BaseScraper]) -> tuple[str, str, set[str]]:
     failed: set[str] = set()
@@ -89,9 +80,9 @@ def _download_apk(entry: AppEntry, version: str, arch: str, pkg_name: str, scrap
     if stock_apk.exists():
         return DownloadResult(path=stock_apk, is_bundle=False)
 
-    stock_apkm = stock_apk.with_suffix(".apkm")
-    if stock_apkm.exists():
-        return DownloadResult(path=stock_apkm, is_bundle=True)
+    for suffix in _BUNDLE_SUFFIXES:
+        if (stock_bundle := stock_apk.with_suffix(suffix)).exists():
+            return DownloadResult(path=stock_bundle, is_bundle=True)
 
     ordered_sources = [dl_from] + [src for src in entry.dl_urls if src != dl_from]
     for src in ordered_sources:
@@ -110,11 +101,16 @@ def _download_apk(entry: AppEntry, version: str, arch: str, pkg_name: str, scrap
 def _extract_base_apk(apkm: Path, pkg_name: str, dest_dir: Path) -> Path:
     with zipfile.ZipFile(apkm, "r") as zf:
         names = zf.NameToInfo
-        for name in ("base.apk", f"{pkg_name}.apk"):
+        candidates = ["base.apk", f"{pkg_name}.apk", "splits/base-master.apk", "splits/base.apk"]
+        # XAPK/APKS layouts: the one APK that is not a config/split part is the base.
+        non_split = [n for n in names if n.endswith(".apk") and not Path(n).name.startswith(("config.", "split_"))]
+        if len(non_split) == 1:
+            candidates.append(non_split[0])
+        for name in candidates:
             if name in names:
                 zf.extract(name, dest_dir)
                 return dest_dir / name
-    raise BuilderError(f"Neither 'base.apk' nor '{pkg_name}.apk' found inside {apkm.name}")
+    raise BuilderError(f"No base APK found inside {apkm.name}")
 
 def _verify_sig(dl_result: DownloadResult, pkg_name: str, patcher: PatcherCLI, table: str, skip_sigcheck: bool, strict_sigcheck: bool) -> None:
     if skip_sigcheck:
@@ -160,7 +156,7 @@ def _build_single(entry: AppEntry, arch: str, label: str, net: NetworkManager, p
         return None
 
     try:
-        scrapers = {src: _make_scraper(src, net) for src in entry.dl_urls}
+        scrapers = {src: make_scraper(src, net) for src in entry.dl_urls}
         pkg_name, dl_from, failed_sources = _find_pkg_name(entry, scrapers)
         list_patches = patcher.list_patches(pkg_name, experimental=entry.version == "exp")
         version, vcode, force = _resolve_version(entry, patcher, list_patches, pkg_name, dl_from, scrapers, arch)

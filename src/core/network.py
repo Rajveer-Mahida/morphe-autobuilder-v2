@@ -137,6 +137,26 @@ class NetworkManager:
                 _retry_sleep(attempt)
         raise NetworkError(f"Request failed after {_MAX_ATTEMPTS} attempts: {url}") from last_exc
 
+    def post(self, url: str, data: dict[str, str], headers: dict[str, str] | None = None) -> str:
+        netloc = urlparse(url).netloc
+        last_exc: Exception | None = None
+        for attempt in range(1, _MAX_ATTEMPTS + 1):
+            try:
+                with _get_lock(self._domain_locks, self._domain_mu, netloc):
+                    time.sleep(0.5)
+                    resp = self.session.post(url, data=data, timeout=(5, 10), allow_redirects=True, headers=headers, verify=True)
+
+                if _handle_status(resp, url, attempt):
+                    _retry_sleep(attempt)
+                    continue
+
+                return resp.text
+            except req_exc.RequestException as exc:
+                last_exc = exc
+                epr(f"Request error for {url}, attempt {attempt}/{_MAX_ATTEMPTS}: {exc}")
+                _retry_sleep(attempt)
+        raise NetworkError(f"Request failed after {_MAX_ATTEMPTS} attempts: {url}") from last_exc
+
     def download(self, url: str, dest: Path, headers: dict[str, str] | None = None) -> None:
         if dest.exists():
             return

@@ -88,17 +88,11 @@ def is_newer_version(new_ver: str, old_ver: str | None) -> bool:
     return full_new > full_old
 
 def _fetch_latest_source_version(entry: AppEntry, net: NetworkManager, scrapers: dict[str, Any]) -> str | None:
-    from src.scrapers.apkmirror import APKMirrorScraper
-    from src.scrapers.github import GitHubScraper
+    from src.scrapers.registry import make_scraper
 
     for src, url in entry.dl_urls.items():
         if src not in scrapers:
-            if src == "apkmirror":
-                scrapers[src] = APKMirrorScraper(net)
-            elif src == "github":
-                scrapers[src] = GitHubScraper(net)
-            else:
-                continue
+            scrapers[src] = make_scraper(src, net)
         try:
             metadata = scrapers[src].cached_metadata(url)
             if metadata.versions:

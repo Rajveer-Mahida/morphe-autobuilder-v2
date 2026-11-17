@@ -61,6 +61,9 @@ All configuration lives in `config.toml` in the project root. Top-level keys def
 [SomeApp]
 apkmirror-dlurl = "https://www.apkmirror.com/apk/inc/app"
 # github-dlurl = "https://github.com/owner/repo/releases/tag/app"
+# Fallbacks, tried in this order when APKMirror fails:
+# uptodown-dlurl = "https://app.en.uptodown.com/android"
+# apkpure-dlurl = "https://apkpure.com/app/com.example.app"
 
 [SomeApp.patches]
 # Simple form - fetches latest version, applies listed patches
@@ -86,6 +89,10 @@ apkmirror-dlurl = "https://www.apkmirror.com/apk/inc/app"
 | `changelog-keywords` | List of keywords used to detect if this app was updated in the release notes | `[]` | Per-app |
 | `apkmirror-dlurl` | APKMirror page URL | `-` | Per-app |
 | `github-dlurl` | GitHub Releases page URL | `-` | Per-app |
+| `uptodown-dlurl` | Uptodown app page URL (e.g. `https://youtube-music.en.uptodown.com/android`) | `-` | Per-app |
+| `apkpure-dlurl` | APKPure app page URL (e.g. `https://apkpure.com/youtube-music/com.google.android.apps.youtube.music`). Only the newest ~20 uploads are reachable | `-` | Per-app |
+
+> **Download fallback:** an app may list several `*-dlurl` keys. Sources are tried in the order `apkmirror` → `github` → `uptodown` → `apkpure`, and the next one is used only when the previous could not supply the requested version **and** architecture. A store that only has an `arm64-v8a` file is never used for an `armeabi-v7a` or `all` build.
 | `exclusive-patches` | Only apply patches listed in `[AppName.patches]`, exclude everything else | `false` | Per-app |
 | `patcher-args` | Extra arguments passed directly to Morphe CLI | `-` | Per-app |
 | `skip-sigcheck` | Completely bypasses signature checks for this app (see note below) | `false` | **Per-app only** |
