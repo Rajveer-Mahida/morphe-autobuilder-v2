@@ -78,7 +78,8 @@ apkmirror-dlurl = "https://www.apkmirror.com/apk/inc/app"
 | 🔑 Key | 📝 Description | 🔤 Default | 📌 Scope |
 |:------:|:--------------:|:----------:|:--------:|
 | `parallel-jobs` | Number of concurrent builds | `CPU count` | Global |
-| `brand` | Used in output filenames | `Morphe` | Global / Per-app |
+| `brand` | Groups apps into one release series per patch source; used in tags (`<brand>-<patch version>`) and output filenames | `Morphe` | Global / Per-app |
+| `brand-title` | Display name of the brand in release titles (e.g. `ReVanced Extended`) | brand in title case | Per-app |
 | `cli-version` | CLI version to fetch (`latest`, `dev`, or a specific version string) | `latest` | Global / Per-app |
 | `cli-source` | GitHub or GitLab repo for CLI (`github:owner/repo` or `gitlab:owner/repo`) | `github:MorpheApp/morphe-desktop` | Global / Per-app |
 | `strict-sigcheck` | Fail the build if an app is missing from `sig.txt` (see note below) | `true` | **Global only** |
@@ -94,6 +95,7 @@ apkmirror-dlurl = "https://www.apkmirror.com/apk/inc/app"
 
 > **Download fallback:** an app may list several `*-dlurl` keys. Sources are tried in the order `apkmirror` → `github` → `uptodown` → `apkpure`, and the next one is used only when the previous could not supply the requested version **and** architecture. A store that only has an `arm64-v8a` file is never used for an `armeabi-v7a` or `all` build.
 | `exclusive-patches` | Only apply patches listed in `[AppName.patches]`, exclude everything else | `false` | Per-app |
+| `inclusive-patches` | Apply **every** patch the bundle lists for the app, minus any in `exclude` | `false` | Per-app |
 | `patcher-args` | Extra arguments passed directly to Morphe CLI | `-` | Per-app |
 | `skip-sigcheck` | Completely bypasses signature checks for this app (see note below) | `false` | **Per-app only** |
 | `track-apk` | Trigger builds when a newer APK version is found on download source, even if there are no new patch releases | `false` | Global / Per-app |
@@ -139,21 +141,21 @@ A list of keyword strings to search for in the release notes. If not specified, 
 
 4. ➕ **Adding a new patch source**:
 
-- Add your app entries to `config.toml` with a `[AppName.patches]` table pointing to your patch repo, and set `brand` accordingly (see the configuration table above for all available options).
-- Add a new job to `.github/workflows/ci.yml` so the CI picks up your brand automatically. Copy the block below and replace every occurrence of `<brand>` with your brand name in **lowercase** (must match the `brand` value set in `config.toml`):
-```yaml
-build-<brand>:
-  name: build (<brand>)
-  needs: check-versions
-  if: contains(fromJson(needs.check-versions.outputs.build_matrix), '<brand>')
-  uses: ./.github/workflows/build.yml
-  with:
-    patch_source: '<brand>'
-    filter_changelog: ${{ inputs.force_build != true }}
-  secrets: inherit
-```
+- Add your app entries to `config.toml` with a `[AppName.patches]` table pointing to your patch repo, and set `brand` to a short lowercase name for that source (see the configuration table above). Nothing else is needed: CI builds every `brand` it finds in `config.toml`, and its releases are tagged `<brand>-<patch version>`.
+- Optionally set `brand-title` for a nicer release title (`brand = "revanced-extended"`, `brand-title = "ReVanced Extended"`).
+- Run the **Pin signatures** workflow (or `python -m src.scripts.pin_signatures --write`) so the new apps are checked against their developer's certificate.
+- Regenerate the catalog with `python -m src.scripts.catalog --repo <owner>/<repo>`.
 
-5. 🔑 **Keystore**:
+5. 🧰 **Helper scripts**:
+
+| Script | What it does |
+|:------:|:------------:|
+| `python -m src.scripts.import_rvb --write` | Imports every app [nullcpy/rvb](https://github.com/nullcpy/rvb) builds that this builder can build, into a marked block of `config.toml`. Rerunning replaces only that block. Needs `GITHUB_TOKEN`. |
+| `python -m src.scripts.pin_signatures --write` | Adds the official signing certificate of every unpinned app to `sig.txt` (from APKMirror, cross-checked with APKPure). Also available as the **Pin signatures** workflow. |
+| `python -m src.scripts.catalog --repo <owner>/<repo>` | Rewrites `APPS.md` from `config.toml`. |
+| `python -m src.scripts.obtainium --repo <owner>/<repo>` | Prints the Obtainium import links used in `README.md`. |
+
+6. 🔑 **Keystore**:
 
 To sign APKs with a custom keystore, create a `.env` file in the project root:
 

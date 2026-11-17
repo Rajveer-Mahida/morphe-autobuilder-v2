@@ -43,6 +43,10 @@ APPS: tuple[ObtainiumApp, ...] = (
     ObtainiumApp("x-piko", "com.twitter.android", "X", "Piko", "X", "x-piko-v"),
     ObtainiumApp("twitter-piko", "com.twitter.android", "Twitter", "Piko", "Twitter", "twitter-piko-v"),
     ObtainiumApp("instagram-piko", "com.instagram.android", "Instagram", "Piko", "Instagram", "instagram-piko-v"),
+    ObtainiumApp("yt-rvx", "anddea.youtube", "YouTube ReVanced Extended", "ReVanced Extended", "YouTube", "youtube-revanced-extended-v"),
+    ObtainiumApp("music-rvx", "anddea.youtube.music", "YouTube Music ReVanced Extended", "ReVanced Extended", "YouTube Music", "youtube-music-revanced-extended-v"),
+    ObtainiumApp("jiotv-chiggi", "com.jio.media.jiotvplus", "JioTV Plus TV", "Chiggi", "JioTV Plus TV", "jiotv-plus-tv-chiggi-v"),
+    ObtainiumApp("threads-chiggi", "com.instagram.barcelona", "Threads", "Chiggi", "Threads", "threads-chiggi-v"),
 )
 
 
