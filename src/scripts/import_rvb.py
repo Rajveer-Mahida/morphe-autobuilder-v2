@@ -189,6 +189,11 @@ def convert(net: NetworkManager) -> tuple[str, Report]:
     apps = _load_rvb(net)
     config_text = CONFIG_PATH.read_text(encoding="utf-8")
     have = _existing_packages(config_text)
+    # Keep the user's on/off choices: tables switched off stay off, and once any imported app
+    # is switched off (a selection was made), apps new to rvb arrive switched off too.
+    previous = tomllib.loads(config_text.split(BEGIN, 1)[1].split(END, 1)[0]) if BEGIN in config_text and END in config_text else {}
+    turned_off = {k for k, v in previous.items() if isinstance(v, dict) and v.get("enabled") is False}
+    selecting = bool(turned_off)
     hand_tables = {k for k, v in tomllib.loads(config_text.split(BEGIN)[0]).items() if isinstance(v, dict)}
 
     specs = {s for a in apps for s in _source_specs(a)}
@@ -255,6 +260,8 @@ def convert(net: NetworkManager) -> tuple[str, Report]:
 
         app_name = " ".join(filter(None, [str(app.get("app-name") or app["_table"]), variant]))
         lines = [f"[{app['_table']}]", f"app-name = {_toml(app_name)}", f"brand = {_toml(brand)}"]
+        if app["_table"] in turned_off or (selecting and app["_table"] not in previous):
+            lines.append("enabled = false")
         if brand_title:
             lines.append(f"brand-title = {_toml(brand_title)}")
         lines.append(f"arch = {_toml(_ARCH.get(str(app.get('arch', 'both')), 'both'))}")
