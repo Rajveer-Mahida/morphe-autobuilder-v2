@@ -13,6 +13,7 @@ patcher-args = "-e 'Change header' -Ocustom=icons/YouTube/header -e 'Custom bran
 "github:MorpheApp/morphe-patches" = []
 
 [YouTube-Experimental]
+enabled = false
 apkmirror-dlurl = "https://www.apkmirror.com/apk/google-inc/youtube"
 uptodown-dlurl = "https://youtube.en.uptodown.com/android"
 apkpure-dlurl = "https://apkpure.com/youtube/com.google.android.youtube"
@@ -209,6 +210,7 @@ apkpure-dlurl = "https://apkpure.com/prime-video-android-tv/com.amazon.amazonvid
 "github:ajstrick81/morphe-androidtv-patches" = ["Clone Prime Video"]
 
 [HBOMax-ajstrick81-AndroidTV]
+enabled = false
 app-name = "HBO Max Android TV"
 brand = "ajstrick81"
 arch = "all"
@@ -219,6 +221,7 @@ apkpure-dlurl = "https://apkpure.com/hbo-max-stream-tv-movies/com.wbd.stream"
 "github:ajstrick81/morphe-androidtv-patches" = []
 
 [Peacock-ajstrick81-AndroidTV]
+enabled = false
 app-name = "Peacock Android TV"
 brand = "ajstrick81"
 arch = "all"
@@ -229,6 +232,7 @@ apkpure-dlurl = "https://apkpure.com/peacock-tv-stream-tv-movies/com.peacocktv.p
 "github:ajstrick81/morphe-androidtv-patches" = []
 
 [Tubi-ajstrick81-AndroidTV]
+enabled = false
 app-name = "Tubi Android TV"
 brand = "ajstrick81"
 arch = "all"
@@ -239,6 +243,7 @@ apkpure-dlurl = "https://apkpure.com/tubi-movies-tv-shows-android-app/com.tubitv
 "github:ajstrick81/morphe-androidtv-patches" = []
 
 [ViX-ajstrick81-AndroidTV]
+enabled = false
 app-name = "ViX Android TV"
 brand = "ajstrick81"
 arch = "all"
@@ -249,6 +254,7 @@ apkpure-dlurl = "https://apkpure.com/vix-tv-deportes-y-noticias/com.univision.pr
 "github:ajstrick81/morphe-androidtv-patches" = []
 
 [PlutoTV-ajstrick81-AndroidTV]
+enabled = false
 app-name = "PlutoTV Android TV"
 brand = "ajstrick81"
 arch = "all"
@@ -260,6 +266,7 @@ apkpure-dlurl = "https://apkpure.com/pluto-tv-watch-free-movies-tv/tv.pluto.andr
 "github:ajstrick81/morphe-androidtv-patches" = []
 
 [Netflix-ajstrick81-AndroidTV]
+enabled = false
 app-name = "Netflix Android TV"
 brand = "ajstrick81"
 arch = "armeabi-v7a"
@@ -271,6 +278,7 @@ apkpure-dlurl = "https://apkpure.com/netflix-android-tv-app/com.netflix.ninja"
 "github:ajstrick81/morphe-androidtv-patches" = []
 
 [Twitch-ajstrick81-AndroidTV]
+enabled = false
 app-name = "Twitch Android TV"
 brand = "ajstrick81"
 arch = "all"
@@ -307,6 +315,7 @@ uptodown-dlurl = "https://google-photos.en.uptodown.com/android"
 # ---- andrewliang25: github:andrewliang25/morphe-patches ----
 
 [Facebook-andrewliang25]
+enabled = false
 app-name = "Facebook"
 brand = "andrewliang25"
 arch = "both"
@@ -366,6 +375,7 @@ apkpure-dlurl = "https://apkpure.com/google-maps-app/com.google.android.apps.map
 "github:bearinmindcat/morphe-patches" = ["Add microG-RE support"]
 
 [SonyMusic-bearinmindcat]
+enabled = false
 app-name = "Sony Music"
 brand = "bearinmindcat"
 arch = "all"
@@ -377,6 +387,7 @@ apkpure-dlurl = "https://apkpure.com/music/com.sonyericsson.music"
 "github:bearinmindcat/morphe-patches" = []
 
 [Waze-bearinmindcat]
+enabled = false
 app-name = "Waze"
 brand = "bearinmindcat"
 arch = "all"
@@ -388,6 +399,7 @@ apkpure-dlurl = "https://apkpure.com/waze-navigation-live-traffic/com.waze"
 "github:bearinmindcat/morphe-patches" = ["Alert distances", "All moods", "Average speed zone bar", "Bigger alert pins", "Bigger speedometer", "Change app name", "Flock cameras", "Full black", "Hide Work shortcut", "Hide ads", "Map skin", "Map theme", "Navigation distances", "No AI reporting", "No Google Assistant", "Open without device location", "Patched YouTube Music", "Remove permissions", "Remove sign-in prompts", "Remove telemetry", "Report speed limit", "Share alerts with Maps", "Speed camera alerts", "Speed camera sound at any speed", "Speed cameras everywhere", "Speed limit sign", "Stay awake in the background"]
 
 [XiaomiRecorder-bearinmindcat]
+enabled = false
 app-name = "Xiaomi Recorder"
 brand = "bearinmindcat"
 arch = "all"
@@ -399,6 +411,7 @@ apkpure-dlurl = "https://apkpure.com/xiaomi-recorder/com.android.soundrecorder"
 "github:bearinmindcat/morphe-patches" = []
 
 [XiaomiScreenRecorder-bearinmindcat]
+enabled = false
 app-name = "Xiaomi Screen Recorder"
 brand = "bearinmindcat"
 arch = "arm64-v8a"
@@ -412,6 +425,7 @@ apkpure-dlurl = "https://apkpure.com/xiaomi-screen-recorder-miui/com.miui.screen
 # ---- bholeykabhakt: github:BholeyKaBhakt/revanced-patches-xtra ----
 
 [Automate-BholeyKaBhakt]
+enabled = false
 app-name = "Automate"
 brand = "bholeykabhakt"
 brand-title = "BholeyKaBhakt"
@@ -434,6 +448,7 @@ uptodown-dlurl = "https://speedtest-net-mobile.en.uptodown.com/android"
 "github:BholeyKaBhakt/revanced-patches-xtra" = []
 
 [Autosync-BholeyKaBhakt]
+enabled = false
 app-name = "Autosync"
 brand = "bholeykabhakt"
 brand-title = "BholeyKaBhakt"
@@ -456,6 +471,7 @@ uptodown-dlurl = "https://inshorts.en.uptodown.com/android"
 "github:BholeyKaBhakt/revanced-patches-xtra" = []
 
 [VPNify-BholeyKaBhakt]
+enabled = false
 app-name = "VPNify"
 brand = "bholeykabhakt"
 brand-title = "BholeyKaBhakt"
@@ -481,6 +497,7 @@ apkpure-dlurl = "https://apkpure.com/backdrops-wallpapers/com.backdrops.wallpape
 # ---- binarymend: github:binarymend/morphe-patches ----
 
 [aCalendar-binarymend]
+enabled = false
 app-name = "aCalendar"
 brand = "binarymend"
 arch = "both"
@@ -491,6 +508,7 @@ apkpure-dlurl = "https://apkpure.com/acalendar-your-calendar/org.withouthat.acal
 "github:binarymend/morphe-patches" = []
 
 [MoonPlusReader-binarymend]
+enabled = false
 app-name = "Moon+ Reader"
 brand = "binarymend"
 arch = "both"
@@ -501,6 +519,7 @@ uptodown-dlurl = "https://moon-reader.en.uptodown.com/android"
 "github:binarymend/morphe-patches" = []
 
 [Symfonium-binarymend]
+enabled = false
 app-name = "Symfonium"
 brand = "binarymend"
 arch = "both"
@@ -511,6 +530,7 @@ uptodown-dlurl = "https://symfonium.en.uptodown.com/android"
 "github:binarymend/morphe-patches" = []
 
 [CalcNote-binarymend]
+enabled = false
 app-name = "CalcNote"
 brand = "binarymend"
 arch = "both"
@@ -534,6 +554,7 @@ apkpure-dlurl = "https://apkpure.com/pinterest/com.pinterest"
 # ---- brosssh: github:brosssh/morphe-patches ----
 
 [komoot-brosssh]
+enabled = false
 app-name = "Komoot"
 brand = "brosssh"
 arch = "both"
@@ -615,6 +636,7 @@ apkpure-dlurl = "https://apkpure.com/swift-backup/org.swiftapps.swiftbackup"
 "github:byehi98/okish-morphe-patches" = []
 
 [SwampAttack-byehi98]
+enabled = false
 app-name = "Swamp Attack"
 brand = "byehi98"
 arch = "all"
@@ -626,6 +648,7 @@ apkpure-dlurl = "https://apkpure.com/swamp-attack/com.outfit7.movingeye.swampatt
 "github:byehi98/okish-morphe-patches" = []
 
 [SwampAttack2-byehi98]
+enabled = false
 app-name = "Swamp Attack 2"
 brand = "byehi98"
 arch = "all"
@@ -638,6 +661,7 @@ apkpure-dlurl = "https://apkpure.com/swamp-attack-2/com.hyperdotstudios.swampatt
 # ---- chiggi: github:durgesh0505/chiggi_morphe_patches ----
 
 [Threads-chiggi]
+enabled = false
 app-name = "Threads"
 brand = "chiggi"
 arch = "arm64-v8a"
@@ -649,6 +673,7 @@ apkpure-dlurl = "https://apkpure.com/threads-app/com.instagram.barcelona"
 "github:durgesh0505/chiggi_morphe_patches" = { version = "latest", include = [], exclude = ["Change app name", "Change package name"] }
 
 [Threads-chiggi-Clone]
+enabled = false
 app-name = "Threads Clone"
 brand = "chiggi"
 arch = "arm64-v8a"
@@ -675,6 +700,7 @@ apkpure-dlurl = "https://apkpure.com/x-formerly-twitter/com.twitter.android"
 # ---- debakarr: github:debakarr/morphe-patches ----
 
 [Meesho-debakarr]
+enabled = false
 app-name = "Meesho"
 brand = "debakarr"
 arch = "both"
@@ -706,6 +732,7 @@ uptodown-dlurl = "https://opnemer.en.uptodown.com/android"
 "github:RookieEnough/De-Vanced" = []
 
 [MicrosoftLens-DeVanced]
+enabled = false
 app-name = "Microsoft Lens"
 brand = "devanced"
 brand-title = "DeVanced"
@@ -717,6 +744,7 @@ uptodown-dlurl = "https://office-lens.en.uptodown.com/android"
 "github:RookieEnough/De-Vanced" = []
 
 [Photomath-DeVanced]
+enabled = false
 app-name = "Photomath"
 brand = "devanced"
 brand-title = "DeVanced"
@@ -728,6 +756,7 @@ uptodown-dlurl = "https://photomath.en.uptodown.com/android"
 "github:RookieEnough/De-Vanced" = []
 
 [Viber-DeVanced]
+enabled = false
 app-name = "Viber"
 brand = "devanced"
 brand-title = "DeVanced"
@@ -738,6 +767,7 @@ apkmirror-dlurl = "https://www.apkmirror.com/apk/viber-media-s-a-r-l/viber"
 "github:RookieEnough/De-Vanced" = []
 
 [Facebook-DeVanced]
+enabled = false
 app-name = "Facebook"
 brand = "devanced"
 brand-title = "DeVanced"
@@ -761,6 +791,7 @@ uptodown-dlurl = "https://google-photos.en.uptodown.com/android"
 "github:RookieEnough/De-Vanced" = []
 
 [Messenger-DeVanced]
+enabled = false
 app-name = "Messenger"
 brand = "devanced"
 brand-title = "DeVanced"
@@ -773,6 +804,7 @@ apkpure-dlurl = "https://apkpure.com/facebook-messenger/com.facebook.orca"
 "github:RookieEnough/De-Vanced" = []
 
 [pixiv-DeVanced]
+enabled = false
 app-name = "pixiv"
 brand = "devanced"
 brand-title = "DeVanced"
@@ -787,6 +819,7 @@ apkpure-dlurl = "https://apkpure.com/pixiv/jp.pxv.android"
 # ---- dh6k: github:dh6k/morphe-patches ----
 
 [BraveBrowser-dh6k-Nightly]
+enabled = false
 app-name = "Brave Browser Nightly"
 brand = "dh6k"
 arch = "both"
@@ -798,6 +831,7 @@ apkpure-dlurl = "https://apkpure.com/brave-nightly/com.brave.browser_nightly"
 "github:dh6k/morphe-patches" = []
 
 [TitaniumBrowser-dh6k]
+enabled = false
 app-name = "Titanium Browser"
 brand = "dh6k"
 arch = "both"
@@ -835,6 +869,7 @@ apkpure-dlurl = "https://apkpure.com/google-news-daily-headlines/com.google.andr
 # ---- entree3k: github:Entree3k/Morning-Entree-Patches ----
 
 [AppSales-Entree3k]
+enabled = false
 app-name = "AppSales"
 brand = "entree3k"
 brand-title = "Entree3k"
@@ -847,6 +882,7 @@ apkpure-dlurl = "https://apkpure.com/appsales/net.tsapps.appsales"
 "github:Entree3k/Morning-Entree-Patches" = []
 
 [NiagaraLauncher-Entree3k]
+enabled = false
 app-name = "Niagara Launcher"
 brand = "entree3k"
 brand-title = "Entree3k"
@@ -862,6 +898,7 @@ apkpure-dlurl = "https://apkpure.com/niagara-launcher-%E2%80%A7-fresh-clean/bitp
 # ---- franticg33k: github:franticg33k/morphe-patches ----
 
 [ByAir-franticg33k]
+enabled = false
 app-name = "ByAir"
 brand = "franticg33k"
 arch = "both"
@@ -874,6 +911,7 @@ apkpure-dlurl = "https://apkpure.com/byair-flight-tracker-status/com.byairapp.an
 # ---- fripe070: github:Fripe070/PixivPatches ----
 
 [pixiv-Fripe070]
+enabled = false
 app-name = "pixiv"
 brand = "fripe070"
 arch = "both"
@@ -887,6 +925,7 @@ apkpure-dlurl = "https://apkpure.com/pixiv/jp.pxv.android"
 # ---- froggo: github:SapitoSucio/FroggoMorphePatches ----
 
 [Facebook-Froggo]
+enabled = false
 app-name = "Facebook"
 brand = "froggo"
 arch = "arm64-v8a"
@@ -900,6 +939,7 @@ apkpure-dlurl = "https://apkpure.com/facebook-app/com.facebook.katana"
 # ---- ggyasin: github:ggYasin/ggyasin-morphe-patches ----
 
 [OfflineGames-ggYasin]
+enabled = false
 app-name = "Offline Games"
 brand = "ggyasin"
 brand-title = "ggYasin"
@@ -914,6 +954,7 @@ apkpure-dlurl = "https://apkpure.com/offline-games-no-wifi-games/com.JindoBlu.Of
 # ---- heval99: github:heval99/Heval-Morphe-Patches ----
 
 [FairEmail-heval99]
+enabled = false
 app-name = "FairEmail"
 brand = "heval99"
 arch = "both"
@@ -925,6 +966,7 @@ apkpure-dlurl = "https://apkpure.com/fairemail-privacy-aware-email/eu.faircode.e
 "github:heval99/Heval-Morphe-Patches" = []
 
 [Sofascore-heval99]
+enabled = false
 app-name = "Sofascore"
 brand = "heval99"
 arch = "both"
@@ -936,6 +978,7 @@ apkpure-dlurl = "https://apkpure.com/sofascore-sports-live-scores/com.sofascore.
 "github:heval99/Heval-Morphe-Patches" = []
 
 [MyFitnessPal-heval99]
+enabled = false
 app-name = "MyFitnessPal"
 brand = "heval99"
 arch = "both"
@@ -960,6 +1003,7 @@ apkpure-dlurl = "https://apkpure.com/truecaller-caller-id-block-for-android-2024
 # ---- hoodles: github:hoo-dles/morphe-patches ----
 
 [AdGuard-hoodles]
+enabled = false
 app-name = "AdGuard"
 brand = "hoodles"
 arch = "both"
@@ -1015,6 +1059,7 @@ apkpure-dlurl = "https://apkpure.com/solid-explorer-file-manager/pl.solidexplore
 "github:hoo-dles/morphe-patches" = []
 
 [IconPacker-hoodles]
+enabled = false
 app-name = "Icon Packer"
 brand = "hoodles"
 arch = "both"
@@ -1024,6 +1069,7 @@ apkpure-dlurl = "https://apkpure.com/icon-packer/cn.ommiao.iconpacker"
 "github:hoo-dles/morphe-patches" = []
 
 [PodcastAddict-hoodles]
+enabled = false
 app-name = "Podcast Addict"
 brand = "hoodles"
 arch = "both"
@@ -1035,6 +1081,7 @@ apkpure-dlurl = "https://apkpure.com/podcast-addict-app/com.bambuna.podcastaddic
 "github:hoo-dles/morphe-patches" = []
 
 [SmartLauncher6-hoodles]
+enabled = false
 app-name = "Smart Launcher 6"
 brand = "hoodles"
 arch = "both"
@@ -1057,6 +1104,7 @@ apkpure-dlurl = "https://apkpure.com/dictionary-merriam-webster/com.merriamwebst
 "github:hoo-dles/morphe-patches" = []
 
 [Pandora-hoodles]
+enabled = false
 app-name = "Pandora"
 brand = "hoodles"
 arch = "both"
@@ -1066,6 +1114,7 @@ apkmirror-dlurl = "https://www.apkmirror.com/apk/pandora/pandora-music-podcasts"
 "github:hoo-dles/morphe-patches" = []
 
 [XRecorder-hoodles]
+enabled = false
 app-name = "XRecorder"
 brand = "hoodles"
 arch = "both"
@@ -1077,6 +1126,7 @@ apkpure-dlurl = "https://apkpure.com/screen-recorder-xrecorder-app/videoeditor.v
 "github:hoo-dles/morphe-patches" = []
 
 [NovaLauncher-hoodles]
+enabled = false
 app-name = "Nova Launcher"
 brand = "hoodles"
 arch = "both"
@@ -1088,6 +1138,7 @@ apkpure-dlurl = "https://apkpure.com/nova-launcher-home-screen/com.teslacoilsw.l
 "github:hoo-dles/morphe-patches" = []
 
 [Ventusky-hoodles]
+enabled = false
 app-name = "Ventusky"
 brand = "hoodles"
 arch = "both"
@@ -1120,6 +1171,7 @@ uptodown-dlurl = "https://github-android.en.uptodown.com/android"
 "github:hoo-dles/morphe-patches" = ["AMOLED dark theme"]
 
 [HelloChinese-hoodles]
+enabled = false
 app-name = "HelloChinese"
 brand = "hoodles"
 arch = "arm64-v8a"
@@ -1141,6 +1193,7 @@ apkpure-dlurl = "https://apkpure.com/prime-video-android-tv/com.amazon.amazonvid
 "github:hoo-dles/morphe-patches" = []
 
 [Goodreads-hoodles]
+enabled = false
 app-name = "Goodreads"
 brand = "hoodles"
 arch = "both"
@@ -1161,6 +1214,7 @@ uptodown-dlurl = "https://adobe-lightroom-mobile.en.uptodown.com/android"
 "github:hoo-dles/morphe-patches" = []
 
 [Xodo-hoodles]
+enabled = false
 app-name = "Xodo"
 brand = "hoodles"
 arch = "both"
@@ -1172,6 +1226,7 @@ apkpure-dlurl = "https://apkpure.com/xodo-pdf-reader-editor/com.xodo.pdf.reader"
 "github:hoo-dles/morphe-patches" = []
 
 [MyFitnessPal-hoodles]
+enabled = false
 app-name = "MyFitnessPal"
 brand = "hoodles"
 arch = "both"
@@ -1193,6 +1248,7 @@ uptodown-dlurl = "https://protonvpn.en.uptodown.com/android"
 "github:hoo-dles/morphe-patches" = []
 
 [SoundCloud-hoodles]
+enabled = false
 app-name = "SoundCloud"
 brand = "hoodles"
 arch = "both"
@@ -1286,6 +1342,7 @@ apkpure-dlurl = "https://apkpure.com/todoist-to-do-list-planner/com.todoist"
 "github:arandomhooman/hoomans-morphe-patches" = []
 
 [Tumblr-hooman]
+enabled = false
 app-name = "Tumblr"
 brand = "hooman"
 arch = "both"
@@ -1297,6 +1354,7 @@ apkpure-dlurl = "https://apkpure.com/tumblr-1-for-android-app/com.tumblr"
 "github:arandomhooman/hoomans-morphe-patches" = []
 
 [MicrosoftSwiftKey-hooman]
+enabled = false
 app-name = "Microsoft Swiftkey"
 brand = "hooman"
 arch = "both"
@@ -1308,6 +1366,7 @@ apkpure-dlurl = "https://apkpure.com/microsoft-swiftkey-keyboard/com.touchtype.s
 "github:arandomhooman/hoomans-morphe-patches" = []
 
 [FolderSync-hooman]
+enabled = false
 app-name = "FolderSync"
 brand = "hooman"
 arch = "both"
@@ -1319,6 +1378,7 @@ apkpure-dlurl = "https://apkpure.com/foldersync/dk.tacit.android.foldersync.lite
 "github:arandomhooman/hoomans-morphe-patches" = []
 
 [Poweramp-hooman]
+enabled = false
 app-name = "Poweramp"
 brand = "hooman"
 arch = "all"
@@ -1330,6 +1390,7 @@ apkpure-dlurl = "https://apkpure.com/poweramp-music-player-trial-app/com.maxmpz.
 "github:arandomhooman/hoomans-morphe-patches" = []
 
 [Rumble-hooman]
+enabled = false
 app-name = "Rumble"
 brand = "hooman"
 arch = "both"
@@ -1341,6 +1402,7 @@ apkpure-dlurl = "https://apkpure.com/rumble-app/com.rumble.battles"
 "github:arandomhooman/hoomans-morphe-patches" = []
 
 [Twitch-hooman]
+enabled = false
 app-name = "Twitch"
 brand = "hooman"
 arch = "both"
@@ -1354,6 +1416,7 @@ apkpure-dlurl = "https://apkpure.com/twitch-livestream-multiplayer-games-esports
 # ---- hushfacebook: github:SysAdminDoc/HushFacebook ----
 
 [Facebook-HushFacebook]
+enabled = false
 app-name = "Facebook"
 brand = "hushfacebook"
 brand-title = "HushFacebook"
@@ -1366,6 +1429,7 @@ apkpure-dlurl = "https://apkpure.com/facebook-app/com.facebook.katana"
 "github:SysAdminDoc/HushFacebook" = ["AMOLED black theme"]
 
 [Facebook-HushFacebook-MaterialYou]
+enabled = false
 app-name = "Facebook Material You"
 brand = "hushfacebook"
 brand-title = "HushFacebook"
@@ -1420,6 +1484,7 @@ uptodown-dlurl = "https://instagram.en.uptodown.com/android"
 # ---- hushmessenger: github:SysAdminDoc/HushMessenger ----
 
 [Messenger-HushMessenger]
+enabled = false
 app-name = "Messenger"
 brand = "hushmessenger"
 brand-title = "HushMessenger"
@@ -1449,6 +1514,7 @@ apkpure-dlurl = "https://apkpure.com/pinterest/com.pinterest"
 # ---- hushtelegram: github:SysAdminDoc/HushTelegram ----
 
 [Telegram-HushTelegram-FOSS]
+enabled = false
 app-name = "Telegram FOSS"
 brand = "hushtelegram"
 brand-title = "HushTelegram"
@@ -1460,6 +1526,7 @@ uptodown-dlurl = "https://telegram.en.uptodown.com/android"
 "github:SysAdminDoc/HushTelegram" = []
 
 [Telegram-HushTelegram-GooglePlay]
+enabled = false
 app-name = "Telegram Google Play"
 brand = "hushtelegram"
 brand-title = "HushTelegram"
@@ -1473,6 +1540,7 @@ uptodown-dlurl = "https://telegram-google-play-version.en.uptodown.com/android"
 # ---- hushthreads: github:SysAdminDoc/HushThreads ----
 
 [Threads-HushThreads]
+enabled = false
 app-name = "Threads"
 brand = "hushthreads"
 brand-title = "HushThreads"
@@ -1488,6 +1556,7 @@ apkpure-dlurl = "https://apkpure.com/threads-app/com.instagram.barcelona"
 # ---- hxreborn: github:hxreborn/morphe-patches ----
 
 [aCalendar-hxreborn]
+enabled = false
 app-name = "aCalendar"
 brand = "hxreborn"
 arch = "both"
@@ -1498,6 +1567,7 @@ apkpure-dlurl = "https://apkpure.com/acalendar-your-calendar/org.withouthat.acal
 "github:hxreborn/morphe-patches" = []
 
 [AlboSaveAndOrganize-hxreborn]
+enabled = false
 app-name = "Albo: Save & Organize"
 brand = "hxreborn"
 arch = "both"
@@ -1507,6 +1577,7 @@ apkpure-dlurl = "https://apkpure.net/albo-save-organize/com.thesortdapp.sortd"
 "github:hxreborn/morphe-patches" = ["GmsCore support"]
 
 [AliExpress-hxreborn]
+enabled = false
 app-name = "AliExpress"
 brand = "hxreborn"
 arch = "both"
@@ -1538,6 +1609,7 @@ apkpure-dlurl = "https://apkpure.com/atvtools/dev.vodik7.atvtools"
 "github:hxreborn/morphe-patches" = []
 
 [PocketWhip-hxreborn]
+enabled = false
 app-name = "Pocket Whip"
 brand = "hxreborn"
 arch = "both"
@@ -1548,6 +1620,7 @@ apkpure-dlurl = "https://apkpure.com/pocket-whip-original-whip-app/com.greenston
 "github:hxreborn/morphe-patches" = []
 
 [Terabox-hxreborn]
+enabled = false
 app-name = "TeraBox"
 brand = "hxreborn"
 arch = "both"
@@ -1569,6 +1642,7 @@ apkpure-dlurl = "https://apkpure.com/password-manager-proton-pass/proton.android
 "github:hxreborn/morphe-patches" = []
 
 [InternetSpeedMeterLite-hxreborn]
+enabled = false
 app-name = "Internet Speed Meter Lite"
 brand = "hxreborn"
 arch = "all"
@@ -1580,6 +1654,7 @@ apkpure-dlurl = "https://apkpure.com/internet-speed-meter-lite/com.internet.spee
 "github:hxreborn/morphe-patches" = []
 
 [Musicolet-hxreborn]
+enabled = false
 app-name = "Musicolet"
 brand = "hxreborn"
 arch = "both"
@@ -1591,6 +1666,7 @@ apkpure-dlurl = "https://apkpure.com/musicolet-music-player-app/in.krosbits.musi
 "github:hxreborn/morphe-patches" = []
 
 [MusicoletCastPlugin-hxreborn]
+enabled = false
 app-name = "Musicolet Cast Plugin"
 brand = "hxreborn"
 arch = "both"
@@ -1623,6 +1699,7 @@ uptodown-dlurl = "https://protonvpn.en.uptodown.com/android"
 "github:hxreborn/morphe-patches" = []
 
 [RidmikKeyboard-hxreborn]
+enabled = false
 app-name = "Ridmik Keyboard"
 brand = "hxreborn"
 arch = "all"
@@ -1662,6 +1739,7 @@ apkpure-dlurl = "https://apkpure.com/tiktok-app/com.zhiliaoapp.musically"
 # ---- imnoammm: github:ImNoammm/Noams-Morphe-Patches ----
 
 [BlockBlast-ImNoammm]
+enabled = false
 app-name = "Block Blast"
 brand = "imnoammm"
 brand-title = "ImNoammm"
@@ -1676,6 +1754,7 @@ apkpure-dlurl = "https://apkpure.com/block-blast/com.block.juggle"
 # ---- imxeren: gitlab:IMXEren/mix-patches ----
 
 [TraktTV-IMXEren]
+enabled = false
 app-name = "trakt.TV"
 brand = "imxeren"
 brand-title = "IMXEren"
@@ -1714,6 +1793,7 @@ apkpure-dlurl = "https://apkpure.com/gboard-the-google-keyboard-app/com.google.a
 # ---- kondratjev: github:kondratjev/morphe-patches ----
 
 [CalorieCounter-kondratjev]
+enabled = false
 app-name = "Calorie Counter"
 brand = "kondratjev"
 arch = "both"
@@ -1725,6 +1805,7 @@ apkpure-dlurl = "https://apkpure.com/calorie-counter-by-fatsecret/com.fatsecret.
 "github:kondratjev/morphe-patches" = []
 
 [SoundCloud-kondratjev]
+enabled = false
 app-name = "SoundCloud"
 brand = "kondratjev"
 arch = "both"
@@ -1738,6 +1819,7 @@ apkpure-dlurl = "https://apkpure.com/sound-cloud-android-app/com.soundcloud.andr
 # ---- kurageno8156: github:kurageno8156-lgtm/tiktok-lite-patches ----
 
 [TikTokLite-kurageno8156]
+enabled = false
 app-name = "TikTok Lite"
 brand = "kurageno8156"
 arch = "all"
@@ -1799,6 +1881,7 @@ apkpure-dlurl = "https://apkpure.com/sd-maid-2-se-system-cleaner/eu.darken.sdmse
 # ---- lain: github:kiraio-moe/Lain-Patches ----
 
 [Hermit-Lain]
+enabled = false
 app-name = "Hermit"
 brand = "lain"
 arch = "both"
@@ -1812,6 +1895,7 @@ apkpure-dlurl = "https://apkpure.com/hermit-%E2%80%94-lite-apps-browser/com.chim
 # ---- lurk: github:jordanwoodson/lurk-morphe-patches ----
 
 [Kick-Lurk]
+enabled = false
 app-name = "Kick"
 brand = "lurk"
 arch = "both"
@@ -1823,6 +1907,7 @@ apkpure-dlurl = "https://apkpure.com/kick-live-streaming-app/com.kick.mobile"
 "github:jordanwoodson/lurk-morphe-patches" = []
 
 [Rumble-Lurk]
+enabled = false
 app-name = "Rumble"
 brand = "lurk"
 arch = "both"
@@ -1834,6 +1919,7 @@ apkpure-dlurl = "https://apkpure.com/rumble-app/com.rumble.battles"
 "github:jordanwoodson/lurk-morphe-patches" = []
 
 [Twitch-Lurk]
+enabled = false
 app-name = "Twitch"
 brand = "lurk"
 arch = "both"
@@ -1874,6 +1960,7 @@ apkpure-dlurl = "https://apkpure.com/whatsapp-android/com.whatsapp"
 # ---- mvaishak: github:mvaishak/letterboxd-morphe-patches ----
 
 [Letterboxd-mvaishak]
+enabled = false
 app-name = "Letterboxd"
 brand = "mvaishak"
 arch = "both"
@@ -1885,6 +1972,7 @@ apkpure-dlurl = "https://apkpure.com/letterboxd/com.letterboxd.letterboxd"
 "github:mvaishak/letterboxd-morphe-patches" = { version = "latest", include = [], exclude = ["Material You theme"] }
 
 [Letterboxd-mvaishak-MaterialYou]
+enabled = false
 app-name = "Letterboxd Material You"
 brand = "mvaishak"
 arch = "both"
@@ -1898,6 +1986,7 @@ apkpure-dlurl = "https://apkpure.com/letterboxd/com.letterboxd.letterboxd"
 # ---- mwbra130: github:mwbra130/Retro-Bowl-College ----
 
 [Hermit-mwbra130]
+enabled = false
 app-name = "Hermit"
 brand = "mwbra130"
 arch = "both"
@@ -1909,6 +1998,7 @@ apkpure-dlurl = "https://apkpure.com/hermit-%E2%80%94-lite-apps-browser/com.chim
 "github:mwbra130/Retro-Bowl-College" = []
 
 [Poweramp-mwbra130]
+enabled = false
 app-name = "Poweramp"
 brand = "mwbra130"
 arch = "all"
@@ -1920,6 +2010,7 @@ apkpure-dlurl = "https://apkpure.com/poweramp-music-player-trial-app/com.maxmpz.
 "github:mwbra130/Retro-Bowl-College" = []
 
 [WebVideoCast-mwbra130]
+enabled = false
 app-name = "Web Video Cast"
 brand = "mwbra130"
 arch = "all"
@@ -1933,6 +2024,7 @@ apkpure-dlurl = "https://apkpure.com/web-video-cast-browser-to-tv-app/com.instan
 # ---- newuser7171: github:newuser7171/telegram-morphe-patches- ----
 
 [Telegram-newuser7171-GooglePlay]
+enabled = false
 app-name = "Telegram Google Play"
 brand = "newuser7171"
 arch = "both"
@@ -1943,6 +2035,7 @@ uptodown-dlurl = "https://telegram-google-play-version.en.uptodown.com/android"
 "github:newuser7171/telegram-morphe-patches-" = []
 
 [Telegram-newuser7171-FOSS]
+enabled = false
 app-name = "Telegram FOSS"
 brand = "newuser7171"
 arch = "both"
@@ -1953,6 +2046,7 @@ uptodown-dlurl = "https://telegram.en.uptodown.com/android"
 "github:newuser7171/telegram-morphe-patches-" = []
 
 [PlusMessenger-newuser7171]
+enabled = false
 app-name = "Plus Messenger"
 brand = "newuser7171"
 arch = "both"
@@ -1979,6 +2073,7 @@ apkpure-dlurl = "https://apkpure.com/advanced-download-manager-app/com.dv.adm"
 # ---- pablobaro: github:pablobaro/pablobaro-morphe-patches ----
 
 [Spotify-pablobaro]
+enabled = false
 app-name = "Spotify"
 brand = "pablobaro"
 arch = "both"
@@ -2002,6 +2097,7 @@ uptodown-dlurl = "https://macrodroid.en.uptodown.com/android"
 "gitlab:Paresh-Maheshwari/paresh-patches" = []
 
 [Cricbuzz-Paresh]
+enabled = false
 app-name = "Cricbuzz"
 brand = "paresh"
 arch = "both"
@@ -2013,6 +2109,7 @@ apkpure-dlurl = "https://apkpure.com/cricbuzz-live-cricket-scores/com.cricbuzz.a
 "gitlab:Paresh-Maheshwari/paresh-patches" = []
 
 [LuminaWallpapers-Paresh]
+enabled = false
 app-name = "Lumina Wallpapers"
 brand = "paresh"
 arch = "both"
@@ -2023,6 +2120,7 @@ apkpure-dlurl = "https://apkpure.com/lumina-wallpapers/com.lumina.wallpapers"
 "gitlab:Paresh-Maheshwari/paresh-patches" = []
 
 [Eyecon-Paresh]
+enabled = false
 app-name = "Eyecon"
 brand = "paresh"
 arch = "both"
@@ -2045,6 +2143,7 @@ apkpure-dlurl = "https://apkpure.com/ticktick-to-do-list-calendar/com.ticktick.t
 "gitlab:Paresh-Maheshwari/paresh-patches" = []
 
 [Fing-Paresh]
+enabled = false
 app-name = "Fing"
 brand = "paresh"
 arch = "both"
@@ -2066,6 +2165,7 @@ apkpure-dlurl = "https://apkpure.com/sd-maid-2-se-system-cleaner/eu.darken.sdmse
 "gitlab:Paresh-Maheshwari/paresh-patches" = []
 
 [Telegram-Paresh-FOSS]
+enabled = false
 app-name = "Telegram FOSS"
 brand = "paresh"
 arch = "both"
@@ -2077,6 +2177,7 @@ apkpure-dlurl = "https://apkpure.com/telegram-messenger/org.telegram.messenger.w
 "gitlab:Paresh-Maheshwari/paresh-patches" = []
 
 [PlusMessenger-Paresh]
+enabled = false
 app-name = "Plus Messenger"
 brand = "paresh"
 arch = "both"
@@ -2101,6 +2202,7 @@ apkpure-dlurl = "https://apkpure.com/truecaller-caller-id-block-for-android-2024
 # ---- patchweaver: github:ispacecase/patchweaver ----
 
 [Fdroid-patchweaver]
+enabled = false
 app-name = "F-Droid"
 brand = "patchweaver"
 arch = "both"
@@ -2136,6 +2238,7 @@ apkpure-dlurl = "https://apkpure.com/x-formerly-twitter/com.twitter.android"
 # ---- piracola: github:Piracola/Pixiv-Patched ----
 
 [pixiv-Piracola]
+enabled = false
 app-name = "pixiv"
 brand = "piracola"
 arch = "both"
@@ -2162,6 +2265,7 @@ apkpure-dlurl = "https://apkpure.com/chess-play-and-learn-online/com.chess"
 # ---- proteus: github:ineednotitle/Proteus-Patches ----
 
 [TraktTV-Proteus]
+enabled = false
 app-name = "trakt.TV"
 brand = "proteus"
 arch = "both"
@@ -2175,6 +2279,7 @@ apkpure-dlurl = "https://apkpure.com/trakt-tv-time-to-watch/tv.trakt.trakt"
 # ---- quantavil: github:quantavil/edge-morphe-patches ----
 
 [MicrosoftEdge-quantavil]
+enabled = false
 app-name = "Microsoft Edge"
 brand = "quantavil"
 arch = "both"
@@ -2187,6 +2292,7 @@ uptodown-dlurl = "https://microsoft-edge.en.uptodown.com/android"
 # ---- quantro100: github:Quantro100/Morphe-patches ----
 
 [AliExpress-Quantro100]
+enabled = false
 app-name = "AliExpress"
 brand = "quantro100"
 arch = "both"
@@ -2212,6 +2318,7 @@ uptodown-dlurl = "https://youtube-music.en.uptodown.com/android"
 "github:anddea/revanced-patches" = []
 
 [YouTubeMusic-anddea-nord]
+enabled = false
 app-name = "YouTube Music Nord Theme"
 brand = "revanced-extended"
 brand-title = "ReVanced Extended"
@@ -2224,6 +2331,7 @@ uptodown-dlurl = "https://youtube-music.en.uptodown.com/android"
 "github:anddea/revanced-patches" = []
 
 [YouTubeMusic-anddea-mocha]
+enabled = false
 app-name = "YouTube Music Mocha Theme"
 brand = "revanced-extended"
 brand-title = "ReVanced Extended"
@@ -2248,6 +2356,7 @@ uptodown-dlurl = "https://youtube.en.uptodown.com/android"
 "github:anddea/revanced-patches" = []
 
 [YouTube-anddea-nord]
+enabled = false
 app-name = "YouTube Nord Theme"
 brand = "revanced-extended"
 brand-title = "ReVanced Extended"
@@ -2260,6 +2369,7 @@ uptodown-dlurl = "https://youtube.en.uptodown.com/android"
 "github:anddea/revanced-patches" = ["MaterialYou"]
 
 [YouTube-anddea-mocha]
+enabled = false
 app-name = "YouTube Mocha Theme"
 brand = "revanced-extended"
 brand-title = "ReVanced Extended"
@@ -2287,6 +2397,7 @@ apkpure-dlurl = "https://apkpure.com/capcut-video-editor/com.lemon.lvoverseas"
 # ---- rushiranpise: github:rushiranpise/morphe-patches ----
 
 [AdGuard-rushiranpise-Nightly]
+enabled = false
 app-name = "AdGuard Nightly"
 brand = "rushiranpise"
 arch = "both"
@@ -2318,6 +2429,7 @@ apkpure-dlurl = "https://apkpure.com/macrodroid-device-automation-app/com.arloso
 "github:rushiranpise/morphe-patches" = []
 
 [Messenger-rushiranpise]
+enabled = false
 app-name = "Messenger"
 brand = "rushiranpise"
 arch = "both"
@@ -2351,6 +2463,7 @@ apkpure-dlurl = "https://apkpure.com/proton-mail-encrypted-email/ch.protonmail.a
 "github:rushiranpise/morphe-patches" = []
 
 [Cloudflare-WARP-rushiranpise]
+enabled = false
 app-name = "Cloudflare WARP"
 brand = "rushiranpise"
 arch = "both"
@@ -2361,6 +2474,7 @@ uptodown-dlurl = "https://1-1-1-1.en.uptodown.com/android"
 "github:rushiranpise/morphe-patches" = []
 
 [HolaVPN-rushiranpise]
+enabled = false
 app-name = "Hola VPN"
 brand = "rushiranpise"
 arch = "arm64-v8a"
@@ -2371,6 +2485,7 @@ apkpure-dlurl = "https://apkpure.com/hola-free-vpn-proxy-unblocker/org.hola"
 "github:rushiranpise/morphe-patches" = []
 
 [NinjaVPN-rushiranpise]
+enabled = false
 app-name = "Ninja VPN"
 brand = "rushiranpise"
 arch = "arm64-v8a"
@@ -2380,6 +2495,7 @@ apkpure-dlurl = "https://apkpure.com/ninja-vpn-fast-secure-vpn/app.ninjavpn.andr
 "github:rushiranpise/morphe-patches" = []
 
 [WindscribeVPN-rushiranpise]
+enabled = false
 app-name = "Windscribe VPN"
 brand = "rushiranpise"
 arch = "all"
@@ -2390,6 +2506,7 @@ uptodown-dlurl = "https://windscribe.uptodown.com/android"
 "github:rushiranpise/morphe-patches" = []
 
 [AccuWeather-rushiranpise]
+enabled = false
 app-name = "AccuWeather"
 brand = "rushiranpise"
 arch = "both"
@@ -2401,6 +2518,7 @@ apkpure-dlurl = "https://apkpure.com/accuweather-weather-radar/com.accuweather.a
 "github:rushiranpise/morphe-patches" = []
 
 [TheWeatherChannel-rushiranpise]
+enabled = false
 app-name = "The Weather Channel"
 brand = "rushiranpise"
 arch = "both"
@@ -2412,6 +2530,7 @@ apkpure-dlurl = "https://apkpure.com/the-weather-channel-radar/com.weather.Weath
 "github:rushiranpise/morphe-patches" = []
 
 [BetaManiac-rushiranpise]
+enabled = false
 app-name = "Beta Maniac"
 brand = "rushiranpise"
 arch = "both"
@@ -2422,6 +2541,7 @@ uptodown-dlurl = "https://beta-maniac.en.uptodown.com/android"
 "github:rushiranpise/morphe-patches" = []
 
 [PocketCasts-rushiranpise]
+enabled = false
 app-name = "Pocket Casts"
 brand = "rushiranpise"
 arch = "both"
@@ -2454,6 +2574,7 @@ apkpure-dlurl = "https://apkpure.com/amazon-india-shop-pay-minitv/in.amazon.mSho
 "github:rushiranpise/morphe-patches" = []
 
 [Calm-rushiranpise]
+enabled = false
 app-name = "Calm"
 brand = "rushiranpise"
 arch = "both"
@@ -2465,6 +2586,7 @@ apkpure-dlurl = "https://apkpure.com/calm-sleep-meditate-relax/com.calm.android"
 "github:rushiranpise/morphe-patches" = []
 
 [BluetoothKeyboardAndMouse-rushiranpise]
+enabled = false
 app-name = "Bluetooth Keyboard & Mouse"
 brand = "rushiranpise"
 arch = "both"
@@ -2506,6 +2628,7 @@ uptodown-dlurl = "https://adobe-scan.en.uptodown.com/android"
 "github:rushiranpise/morphe-patches" = []
 
 [Citymapper-rushiranpise]
+enabled = false
 app-name = "Citymapper"
 brand = "rushiranpise"
 arch = "both"
@@ -2517,6 +2640,7 @@ apkpure-dlurl = "https://apkpure.com/citymapper/com.citymapper.app.release"
 "github:rushiranpise/morphe-patches" = []
 
 [AmazonShopping-rushiranpise]
+enabled = false
 app-name = "Amazon Shopping"
 brand = "rushiranpise"
 arch = "both"
@@ -2539,6 +2663,7 @@ apkpure-dlurl = "https://apkpure.com/termius-modern-ssh-client/com.server.audito
 "github:rushiranpise/morphe-patches" = []
 
 [Telegram-rushiranpise-GooglePlay]
+enabled = false
 app-name = "Telegram Google Play"
 brand = "rushiranpise"
 arch = "both"
@@ -2565,6 +2690,7 @@ apkpure-dlurl = "https://apkpure.com/proton-mail-encrypted-email/ch.protonmail.a
 # ---- shaunthesheep: github:shaun-the-sheep-patches/morphe-patches ----
 
 [KineStop-ShaunTheSheep]
+enabled = false
 app-name = "KineStop"
 brand = "shaunthesheep"
 brand-title = "ShaunTheSheep"
@@ -2578,6 +2704,7 @@ apkpure-dlurl = "https://apkpure.com/kinestop-car-sickness-aid/com.urbandroid.ki
 # ---- smart123s: github:Smart123s/morphe-patches ----
 
 [RikardoNemlopot-Smart123s]
+enabled = false
 app-name = "Rikardo Nemlopot"
 brand = "smart123s"
 brand-title = "Smart123s"
@@ -2590,6 +2717,7 @@ apkpure-dlurl = "https://apkpure.com/ricardo-nem-lopot/ricardonemlopot.nemlopot"
 # ---- spicetify: github:spicetify/morphe-patches ----
 
 [Spotify-Spicetify]
+enabled = false
 app-name = "Spotify"
 brand = "spicetify"
 arch = "both"
@@ -2603,6 +2731,7 @@ apkpure-dlurl = "https://apkpure.com/spotify-app/com.spotify.music"
 # ---- trimpsuz: github:Trimpsuz/morphe-patches ----
 
 [Firsty-Trimpsuz]
+enabled = false
 app-name = "Firsty"
 brand = "trimpsuz"
 arch = "all"
@@ -2615,6 +2744,7 @@ apkpure-dlurl = "https://apkpure.com/firsty-global-mobile-network-app/com.firsty
 # ---- venus: github:VenusIsJaded/Venus-Patches ----
 
 [Discord-Venus]
+enabled = false
 app-name = "Discord"
 brand = "venus"
 arch = "all"
@@ -2627,6 +2757,7 @@ uptodown-dlurl = "https://discord-chat-for-gamers.en.uptodown.com/android"
 # ---- xbadfellax: github:XBadFellaX/BadFella-Patches ----
 
 [RemoteforAndroidTV-XBadFellaX]
+enabled = false
 app-name = "Remote for Android TV"
 brand = "xbadfellax"
 brand-title = "XBadFellaX"
@@ -2640,6 +2771,7 @@ apkpure-dlurl = "https://apkpure.com/remote-for-android-tv/tech.simha.androidtvr
 # ---- zeldrisho: github:zeldrisho/morphe-patches ----
 
 [Zalo-zeldrisho]
+enabled = false
 app-name = "Zalo"
 brand = "zeldrisho"
 arch = "all"
@@ -2652,6 +2784,7 @@ apkpure-dlurl = "https://apkpure.com/zalo/com.zing.zalo"
 "github:zeldrisho/morphe-patches" = ["\"Enable Google Drive photo backup\""]
 
 [Zalo-zeldrisho-Clone]
+enabled = false
 app-name = "Zalo Clone"
 brand = "zeldrisho"
 arch = "all"

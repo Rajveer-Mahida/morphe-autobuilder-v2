@@ -35,7 +35,6 @@ class ObtainiumApp:
 
 APPS: tuple[ObtainiumApp, ...] = (
     ObtainiumApp("yt-morphe", "app.morphe.android.youtube", "YouTube", "Morphe", "YouTube", "youtube-morphe-v"),
-    ObtainiumApp("yt-exp-morphe", "app.morphe.android.youtube", "YouTube Experimental", "Morphe", "YouTube Experimental", "youtube-experimental-morphe-v"),
     ObtainiumApp("music-morphe", "app.morphe.android.apps.youtube.music", "YouTube Music", "Morphe", "Music", "music-morphe-v"),
     ObtainiumApp("music-exp-morphe", "app.morphe.android.apps.youtube.music", "YouTube Music Experimental", "Morphe", "Music Experimental", "music-experimental-morphe-v"),
     ObtainiumApp("reddit-morphe", "com.reddit.frontpage", "Reddit", "Morphe", "Reddit", "reddit-morphe-v"),
@@ -47,7 +46,6 @@ APPS: tuple[ObtainiumApp, ...] = (
     ObtainiumApp("music-rvx", "anddea.youtube.music", "YouTube Music ReVanced Extended", "ReVanced Extended", "YouTube Music", "youtube-music-revanced-extended-v"),
     ObtainiumApp("jiohotstar-chiggi", "in.startv.hotstar", "JioHotstar TV", "Chiggi", "JioHotstar TV", "jiohotstar-tv-chiggi-v"),
     ObtainiumApp("jiotv-chiggi", "com.jio.media.jiotvplus", "JioTV Plus TV", "Chiggi", "JioTV Plus TV", "jiotv-plus-tv-chiggi-v"),
-    ObtainiumApp("threads-chiggi", "com.instagram.barcelona", "Threads", "Chiggi", "Threads", "threads-chiggi-v"),
 )
 
 
