@@ -22,7 +22,7 @@ from curl_cffi import requests as curl_requests
 from src.core.logger import IS_GITHUB, abort, epr, pr
 
 _BACKTICK_RE = re.compile(r"`([^`]+)`")
-# A download-table row: "| Music | `9.30.53` | `arm64-v8a` | [**⬇️ APK**](url) |"
+# A download-table row: "| Music | `9.30.53` | `arm64-v8a` | [**APK**](url) |"
 _ROW_RE = re.compile(r"^\| (?P<name>[^|]+?) \| (?P<ver>`[^`]+`) \| (?P<arch>[^|]+?) \| (?:\[[^\]]*\]\((?P<url>[^)]+)\)|—) \|$")
 
 

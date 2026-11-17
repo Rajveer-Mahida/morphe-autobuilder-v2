@@ -88,7 +88,7 @@ def _render(notes: _Notes) -> str:
     builds = sorted(dict.fromkeys(notes.builds), key=lambda b: (b.name.lower(), _ARCH_ORDER.get(b.arch, 9)))
     for b in builds:
         arch = f"`{b.arch}`" if b.arch else "Universal"
-        dl = f"[**⬇️ APK**]({b.url})" if b.url else "—"
+        dl = f"[**APK**]({b.url})" if b.url else "—"
         out.append(f"| {b.name} | `{b.version}` | {arch} | {dl} |")
 
     out += ["", "### 🧩 Build details", "", "| Component | Version |", "| :--- | :--- |"]
