@@ -1,6 +1,6 @@
 # 📚 All apps
 
-Every app this repository builds: **231 apps** from **73 patch sources**.
+Every app this repository builds: **232 apps** from **73 patch sources**.
 Each patch source publishes its own releases, tagged `<source>-<patch version>`.
 
 > [!NOTE]
@@ -21,10 +21,10 @@ Each patch source publishes its own releases, tagged `<source>-<patch version>`.
 | [ReVanced Extended](#revanced-extended) | 6 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=revanced-extended-&expanded=true) |
 | [Binarymend](#binarymend) | 5 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=binarymend-&expanded=true) |
 | [Piko](#piko) | 5 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=piko-&expanded=true) |
+| [Chiggi](#chiggi) | 4 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=chiggi-&expanded=true) |
 | [Heval99](#heval99) | 4 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=heval99-&expanded=true) |
 | [Brosssh](#brosssh) | 3 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=brosssh-&expanded=true) |
 | [Byehi98](#byehi98) | 3 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=byehi98-&expanded=true) |
-| [Chiggi](#chiggi) | 3 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=chiggi-&expanded=true) |
 | [Dh6K](#dh6k) | 3 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=dh6k-&expanded=true) |
 | [Lurk](#lurk) | 3 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=lurk-&expanded=true) |
 | [Mwbra130](#mwbra130) | 3 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=mwbra130-&expanded=true) |
@@ -326,6 +326,18 @@ Patches: [crimera/piko](https://github.com/crimera/piko) · [Releases](https://g
 | Twitter Material You | `arm64-v8a` · `armeabi-v7a` |
 | X | Universal |
 
+<a id="chiggi"></a>
+## Chiggi
+
+Patches: [durgesh0505/chiggi_morphe_patches](https://github.com/durgesh0505/chiggi_morphe_patches) · [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=chiggi-&expanded=true)
+
+| App | Architecture |
+| :--- | :---: |
+| JioHotstar TV | Universal |
+| JioTV Plus TV | Universal |
+| Threads | `arm64-v8a` |
+| Threads Clone | `arm64-v8a` |
+
 <a id="heval99"></a>
 ## Heval99
 
@@ -359,17 +371,6 @@ Patches: [byehi98/okish-morphe-patches](https://github.com/byehi98/okish-morphe-
 | Swamp Attack | Universal |
 | Swamp Attack 2 | Universal |
 | Swift Backup | `arm64-v8a` · `armeabi-v7a` |
-
-<a id="chiggi"></a>
-## Chiggi
-
-Patches: [durgesh0505/chiggi_morphe_patches](https://github.com/durgesh0505/chiggi_morphe_patches) · [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=chiggi-&expanded=true)
-
-| App | Architecture |
-| :--- | :---: |
-| JioTV Plus TV | Universal |
-| Threads | `arm64-v8a` |
-| Threads Clone | `arm64-v8a` |
 
 <a id="dh6k"></a>
 ## Dh6K
