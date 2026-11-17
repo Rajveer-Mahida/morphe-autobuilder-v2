@@ -100,6 +100,7 @@ apkmirror-dlurl = "https://www.apkmirror.com/apk/inc/app"
 | `skip-sigcheck` | Completely bypasses signature checks for this app (see note below) | `false` | **Per-app only** |
 | `track-apk` | Trigger builds when a newer APK version is found on download source, even if there are no new patch releases | `false` | Global / Per-app |
 | `enabled` | Set to `false` to skip this entry | `true` | Per-app |
+| `pkg-name` | Package name, for an app built only from the APK cache (no `*-dlurl` keys) | `-` | Per-app |
 
 **`[AppName.patches]` table** - defines which patch bundles to use and which patches to apply from each:
 
@@ -156,7 +157,20 @@ A list of keyword strings to search for in the release notes. If not specified, 
 | `python -m src.scripts.obtainium --repo <owner>/<repo>` | Prints the Obtainium import links used in `README.md`. |
 | `python -m src.scripts.workflow_choices` | Writes every brand in `config.toml` into the "Run workflow" dropdowns of `ci.yml` and `build.yml` (the importer runs it automatically). |
 
-6. 🔑 **Keystore**:
+6. 📦 **APK cache**:
+
+Every stock (unpatched) APK a build downloads from a store is saved in this repository as a **draft release**, one per app, named `APK cache: <package>`. Later builds take the file from there instead of downloading it again, which is faster and avoids APKMirror's rate limits. Drafts are visible only to the repository owner and to workflows, so the original apps are never published. The cache works only on GitHub Actions and needs no setup; a file is cached only after it passed the signature check.
+
+**Adding an APK by hand** (for apps no store carries, such as the Android TV builds some patches need):
+
+1. Open **Releases → Draft a new release** (or edit the existing draft `APK cache: <package>`).
+2. Tag: `apk-cache-<package>` · Title: `APK cache: <package>` (for example `APK cache: com.sonyliv`).
+3. Attach the file named `<package>-v<version>-<arch>.<apk|apkm|xapk|apks>`, where `<arch>` is `all` for a universal APK or a bundle with every architecture, or `arm64-v8a` / `armeabi-v7a`. Example: `com.sonyliv-v6.23.1-all.apkm`.
+4. Click **Save draft** - never publish it.
+
+An app that is only available this way has `pkg-name` set and no `*-dlurl` keys in `config.toml`; when its file is missing, the build log names the exact file to upload.
+
+7. 🔑 **Keystore**:
 
 To sign APKs with a custom keystore, create a `.env` file in the project root:
 

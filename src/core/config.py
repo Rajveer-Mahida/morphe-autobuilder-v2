@@ -47,6 +47,7 @@ class PatchSpec(TypedDict):
 class AppEntry:
     table: str
     app_name: str
+    pkg_name: str
     brand: str
     brand_title: str
     arch: str
@@ -126,6 +127,7 @@ def parse_app_entries(data: dict[str, Any], main: Config) -> list[AppEntry]:
         entries.append(AppEntry(
             table=table_name,
             app_name=str(t.get("app-name", table_name.replace("-", " "))),
+            pkg_name=str(t.get("pkg-name", "")),
             brand=str(t.get("brand", main.brand)),
             brand_title=str(t.get("brand-title", "")),
             arch=arch,

@@ -19,7 +19,14 @@ import re
 from datetime import datetime
 from typing import Any
 
-from src.core.config import CONFIG_PATH, AppEntry, file_slug, load_toml, parse_app_entries, parse_config
+from src.core.config import (
+    CONFIG_PATH,
+    AppEntry,
+    file_slug,
+    load_toml,
+    parse_app_entries,
+    parse_config,
+)
 from src.core.logger import IS_GITHUB, abort, epr
 from src.core.network import NetworkManager, ResourceNotFoundError
 from src.core.prebuilts import get_highest_ver, resolve_release_tag, ver_key

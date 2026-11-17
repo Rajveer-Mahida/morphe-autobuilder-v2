@@ -123,6 +123,7 @@ jobs:
       title: ${{ steps.version.outputs.title }}
       prerelease: ${{ steps.set-matrix.outputs.prerelease }}
       patches_pin: ${{ steps.set-matrix.outputs.patches_pin }}
+      apk_cache_index: ${{ steps.apk-cache.outputs.index }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -152,6 +153,14 @@ jobs:
           echo "patches_tag=$(echo "$RESULT" | jq -r '.patches_tag')" >> "$GITHUB_OUTPUT"
           echo "title=$(echo "$RESULT" | jq -r '.title')" >> "$GITHUB_OUTPUT"
           echo "patches_pin=$(echo "$RESULT" | jq -r '"\(.patches_source)@\(.patches_spec)=\(.patches_tag)"')" >> "$GITHUB_OUTPUT"
+
+      # Stock APKs are cached as draft releases of this repo (src/core/apk_cache.py).
+      # Listing them takes a few API calls, so it is done once here for all build jobs.
+      - name: Read the APK cache index
+        id: apk-cache
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "index=$(uv run python -m src.core.apk_cache)" >> "$GITHUB_OUTPUT"
 
       # Releases are named after the patch version they were built from: morphe-2.3.0.
       # A rebuild of the same patch version (a rerun, or an app update) reuses that
@@ -221,6 +230,7 @@ jobs:
           KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASS }}
           KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
           PATCHES_PIN: ${{ needs.prepare.outputs.patches_pin }}
+          APK_CACHE_INDEX: ${{ needs.prepare.outputs.apk_cache_index }}
         run: uv run main.py --target "${{ matrix.id }}" ${{ matrix.arch && format('--arch {0}', matrix.arch) || '' }} --pin-patches "$PATCHES_PIN"
 
       - name: Upload APKs to draft release

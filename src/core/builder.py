@@ -19,6 +19,7 @@ import zipfile
 from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from pathlib import Path
 
+from src.core.apk_cache import ApkCache, asset_name, candidates
 from src.core.config import BUILD_DIR, TEMP_DIR, AppEntry, Config, file_slug
 from src.core.logger import IS_GITHUB, epr, is_interrupted, pr, wpr
 from src.core.network import NetworkError, NetworkManager
@@ -37,6 +38,8 @@ class BuilderError(Exception):
 
 def _find_pkg_name(entry: AppEntry, scrapers: dict[str, BaseScraper]) -> tuple[str, str, set[str]]:
     failed: set[str] = set()
+    if not entry.dl_urls and entry.pkg_name:  # an app built only from the APK cache
+        return entry.pkg_name, "", failed
     for src, url in entry.dl_urls.items():
         try:
             metadata = scrapers[src].cached_metadata(url)
@@ -61,6 +64,8 @@ def _resolve_version(entry: AppEntry, patcher: PatcherCLI, list_patches: str, pk
         version, vcode = v
         is_custom = False
     else:
+        if not dl_from:
+            raise BuilderError("The patches name no app version and no store is configured to ask - set 'version' for this app")
         versions = scrapers[dl_from].cached_metadata(entry.dl_urls[dl_from]).versions
         version = get_highest_ver(versions) if versions else ""
         if not version:
@@ -71,20 +76,24 @@ def _resolve_version(entry: AppEntry, patcher: PatcherCLI, list_patches: str, pk
     pr(f"Choosing version '{version}'{vcode_str} for '{entry.table}'")
     return version, vcode, is_custom
 
-def _download_apk(entry: AppEntry, version: str, arch: str, pkg_name: str, scrapers: dict[str, BaseScraper], dl_from: str, failed_sources: set[str], version_code: str | None = None) -> DownloadResult:
+def _download_apk(entry: AppEntry, version: str, arch: str, pkg_name: str, scrapers: dict[str, BaseScraper], dl_from: str, failed_sources: set[str], cache: ApkCache, version_code: str | None = None) -> tuple[DownloadResult, bool]:
+    """The stock APK, and whether it came from a store (so it should be added to the cache)."""
     arch_f = arch.replace(" ", "")
     version_f = version.replace(" ", "").lstrip("v")
     dpi_suffix = f"_{entry.dpi.replace(' ', '')}" if entry.dpi else ""
     base_name = f"{pkg_name}-v{version_f}-{arch_f}{dpi_suffix}.apk"
     stock_apk = TEMP_DIR / base_name
     if stock_apk.exists():
-        return DownloadResult(path=stock_apk, is_bundle=False)
+        return DownloadResult(path=stock_apk, is_bundle=False), False
 
     for suffix in _BUNDLE_SUFFIXES:
         if (stock_bundle := stock_apk.with_suffix(suffix)).exists():
-            return DownloadResult(path=stock_bundle, is_bundle=True)
+            return DownloadResult(path=stock_bundle, is_bundle=True), False
 
-    ordered_sources = [dl_from] + [src for src in entry.dl_urls if src != dl_from]
+    if cached := cache.fetch(pkg_name, version, arch_f, TEMP_DIR):
+        return DownloadResult(path=cached, is_bundle=cached.suffix in _BUNDLE_SUFFIXES), False
+
+    ordered_sources = [dl_from] + [src for src in entry.dl_urls if src != dl_from] if dl_from else list(entry.dl_urls)
     for src in ordered_sources:
         if src in failed_sources:
             continue
@@ -92,10 +101,12 @@ def _download_apk(entry: AppEntry, version: str, arch: str, pkg_name: str, scrap
         url = entry.dl_urls[src]
         pr(f"Downloading '{entry.table}' from '{src}'")
         try:
-            return scrapers[src].download(url, version, stock_apk, arch, entry.dpi, version_code=version_code)
+            return scrapers[src].download(url, version, stock_apk, arch, entry.dpi, version_code=version_code), True
         except (NetworkError, ScraperError) as exc:
             dpi_str = f", dpi='{entry.dpi}'" if entry.dpi else ""
             epr(f"Failed to fetch '{entry.table}' from '{src}' (version='{version}', arch='{arch}'{dpi_str}): {exc}")
+    if not entry.dl_urls:
+        raise BuilderError(f"Not in the APK cache - upload it to the draft release 'APK cache: {pkg_name}' as one of: {', '.join(candidates(pkg_name, version, arch_f)[:4])}")
     raise BuilderError("Stock APK not found")
 
 def _extract_base_apk(apkm: Path, pkg_name: str, dest_dir: Path) -> Path:
@@ -150,7 +161,7 @@ def _apply_patch(entry: AppEntry, arch: str, version: str, force: bool, patcher:
     shutil.move(patched_apk, apk_output)
     return apk_output
 
-def _build_single(entry: AppEntry, arch: str, label: str, net: NetworkManager, patcher: PatcherCLI, strict_sigcheck: bool) -> str | None:
+def _build_single(entry: AppEntry, arch: str, label: str, net: NetworkManager, patcher: PatcherCLI, strict_sigcheck: bool, cache: ApkCache) -> str | None:
     if entry.table in _failed_signatures:
         epr(f"Skipped '{label}' due to previous signature mismatch")
         return None
@@ -160,8 +171,10 @@ def _build_single(entry: AppEntry, arch: str, label: str, net: NetworkManager, p
         pkg_name, dl_from, failed_sources = _find_pkg_name(entry, scrapers)
         list_patches = patcher.list_patches(pkg_name, experimental=entry.version == "exp")
         version, vcode, force = _resolve_version(entry, patcher, list_patches, pkg_name, dl_from, scrapers, arch)
-        dl_result = _download_apk(entry, version, arch, pkg_name, scrapers, dl_from, failed_sources, version_code=vcode)
+        dl_result, from_store = _download_apk(entry, version, arch, pkg_name, scrapers, dl_from, failed_sources, cache, version_code=vcode)
         _verify_sig(dl_result, pkg_name, patcher, label, entry.skip_sigcheck, strict_sigcheck)
+        if from_store:  # only after the signature check, so a tampered download never enters the cache
+            cache.store(dl_result.path, pkg_name, asset_name(pkg_name, version, arch.replace(" ", ""), dl_result.path.suffix))
         apk_output = _apply_patch(entry, arch, version, force, patcher, list_patches, dl_result)
         pr(f"Built {label}: '{apk_output}'")
         github_asset_name = re.sub(r"\.+", ".", re.sub(r"[^a-zA-Z0-9@+\-_.]", ".", apk_output.name))
@@ -178,11 +191,11 @@ def _build_single(entry: AppEntry, arch: str, label: str, net: NetworkManager, p
             epr(f"Building '{label}' failed! {exc}")
         return None
 
-def _submit_entries(entries: list[AppEntry], pool: ThreadPoolExecutor, net: NetworkManager, ks_path: Path | None, strict_sigcheck: bool) -> list[Future[str | None]]:
+def _submit_entries(entries: list[AppEntry], pool: ThreadPoolExecutor, net: NetworkManager, ks_path: Path | None, strict_sigcheck: bool, cache: ApkCache) -> list[Future[str | None]]:
     futures: list[Future[str | None]] = []
     cli_cache: dict[tuple[str, str], Path] = {}
     for e in entries:
-        if not e.dl_urls:
+        if not e.dl_urls and not e.pkg_name:
             continue
 
         key = (e.cli_source, e.cli_version)
@@ -192,7 +205,7 @@ def _submit_entries(entries: list[AppEntry], pool: ThreadPoolExecutor, net: Netw
             except Exception as exc:
                 epr(f"Could not fetch CLI '{e.cli_source}': {exc}")
 
-    all_patch_srcs = {(src, spec["version"]) for e in entries if e.dl_urls for src, spec in e.patches.items()}
+    all_patch_srcs = {(src, spec["version"]) for e in entries if e.dl_urls or e.pkg_name for src, spec in e.patches.items()}
     mpp_map: dict[tuple[str, str], Path] = {}
     for src, ver in all_patch_srcs:
         try:
@@ -201,8 +214,8 @@ def _submit_entries(entries: list[AppEntry], pool: ThreadPoolExecutor, net: Netw
             epr(f"Could not fetch patches from '{src}': {exc}")
 
     for entry in entries:
-        if not entry.dl_urls:
-            epr(f"No 'dlurl' option was set for '{entry.table}'")
+        if not entry.dl_urls and not entry.pkg_name:
+            epr(f"No 'dlurl' option (or 'pkg-name' for an app built from the APK cache) was set for '{entry.table}'")
             continue
         if not entry.patches:
             epr(f"No 'patches' table defined for '{entry.table}'")
@@ -224,7 +237,7 @@ def _submit_entries(entries: list[AppEntry], pool: ThreadPoolExecutor, net: Netw
             if entry.dpi:
                 details.append(entry.dpi)
             label = f"{entry.app_name} ({', '.join(details)})" if details else entry.app_name
-            futures.append(pool.submit(_build_single, entry, arch, label, net, patcher, strict_sigcheck))
+            futures.append(pool.submit(_build_single, entry, arch, label, net, patcher, strict_sigcheck, cache))
     return futures
 
 def run_build(entries: list[AppEntry], config: Config, net: NetworkManager) -> bool:
@@ -240,7 +253,7 @@ def run_build(entries: list[AppEntry], config: Config, net: NetworkManager) -> b
 
     try:
         with ThreadPoolExecutor(max_workers=config.parallel_jobs) as pool:
-            futures = _submit_entries(entries, pool, net, ks_path, config.strict_sigcheck)
+            futures = _submit_entries(entries, pool, net, ks_path, config.strict_sigcheck, ApkCache(net))
     finally:
         if ks_path:
             ks_path.unlink(missing_ok=True)

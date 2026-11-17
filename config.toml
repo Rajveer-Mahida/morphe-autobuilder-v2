@@ -93,8 +93,43 @@ arch = "arm64-v8a"
 
 # ---- chiggi: streaming apps (Android TV builds) ----
 # chiggi's streaming patches target exact Android TV versions. JioHotstar and JioTV+
-# are on APKMirror; the Sony LIV (6.23.1), ZEE5 (5.83.2) and Vi Movies & TV (10.8)
-# versions they need are not on any public store, so those are not built.
+# are on APKMirror. The Sony LIV, ZEE5 and Vi Movies & TV versions they need are on
+# no public store, so they are built from the APK cache only: upload the stock file
+# to the draft release "APK cache: <pkg-name>" (see CONTRIBUTING.md), then set
+# enabled = true.
+
+[SonyLIV-chiggi]
+app-name = "Sony LIV TV"
+brand = "chiggi"
+arch = "all"
+pkg-name = "com.sonyliv"
+enabled = false
+# upload: com.sonyliv-v6.23.1-all.apkm
+
+[SonyLIV-chiggi.patches]
+"github:durgesh0505/chiggi_morphe_patches" = []
+
+[ZEE5-chiggi]
+app-name = "ZEE5 TV"
+brand = "chiggi"
+arch = "all"
+pkg-name = "com.graymatrix.did"
+enabled = false
+# upload: com.graymatrix.did-v5.83.2-all.apkm
+
+[ZEE5-chiggi.patches]
+"github:durgesh0505/chiggi_morphe_patches" = []
+
+[ViMoviesTV-chiggi]
+app-name = "Vi Movies TV"
+brand = "chiggi"
+arch = "all"
+pkg-name = "com.vimtv"
+enabled = false
+# upload: com.vimtv-v10.8-all.apkm
+
+[ViMoviesTV-chiggi.patches]
+"github:durgesh0505/chiggi_morphe_patches" = []
 
 [JioHotstar-chiggi]
 app-name = "JioHotstar TV"
