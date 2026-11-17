@@ -111,7 +111,9 @@ class APKMirrorScraper(BaseScraper):
             apparch.add(arch)
 
         rows = soup.select("div.table-row.headerFont")
-        passes = tuple(d.strip().lower() for d in dpi.split(",") if d.strip()) if dpi else ("nodpi", "-480dpi", "-640dpi")
+        # Without a dpi setting, prefer density-independent then high-density uploads, and as a last
+        # resort take any density: some apps (Android TV builds) only ship e.g. a 320dpi variant.
+        passes = tuple(d.strip().lower() for d in dpi.split(",") if d.strip()) if dpi else ("nodpi", "-480dpi", "-640dpi", "all")
         for target in passes:
             clean = target.lstrip("-").removesuffix("dpi")
             for bundle_type in ("APK", "BUNDLE"):

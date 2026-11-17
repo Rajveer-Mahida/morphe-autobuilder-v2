@@ -120,6 +120,12 @@ class PatcherCLI:
         return (highest, _extract_version_code(versions_output, highest, arch)) if highest else None
 
     @staticmethod
+    def list_patch_names(list_patches_output: str) -> list[str]:
+        """Every patch name in `list-patches` output, in listing order."""
+        names = [line[5:].strip() for line in list_patches_output.splitlines() if line.lower().startswith("name:")]
+        return list(dict.fromkeys(n for n in names if n))
+
+    @staticmethod
     def resolve_auto_patches(list_patches_output: str) -> tuple[str, str]:
         microg_patch = psu_patch = ""
         for line in list_patches_output.splitlines():
@@ -135,7 +141,7 @@ class PatcherCLI:
                 psu_patch = patch_name
         return microg_patch, psu_patch
 
-    def build_patch_args(self, patches: dict[str, PatchSpec], extra_args: list[str], arch: str, auto_patches: tuple[str, str], exclusive: bool = False, force: bool = False) -> list[str]:
+    def build_patch_args(self, patches: dict[str, PatchSpec], extra_args: list[str], arch: str, auto_patches: tuple[str, str], exclusive: bool = False, force: bool = False, include_all: list[str] | None = None) -> list[str]:
         active_auto = {p for p in auto_patches if p}
         p_args: list[str] = ["-f"] if force else []
         for src, spec in patches.items():
@@ -147,6 +153,12 @@ class PatcherCLI:
                     p_args.extend(("-e", p))
             for p in spec["exclude"]:
                 p_args.extend(("-d", p))
+        if include_all:
+            # inclusive-patches: every listed patch, minus the ones the config excludes.
+            excluded = {p for spec in patches.values() for p in spec["exclude"]} | active_auto
+            for p in include_all:
+                if p not in excluded:
+                    p_args.extend(("-e", p))
         if exclusive:
             p_args.append("--exclusive")
 

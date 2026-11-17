@@ -59,26 +59,34 @@ def release_brand(tag: str) -> str:
         return tag.partition("-")[2].lower()
     return tag.partition("-")[0].lower()
 
+_OUR_RELEASE_PAGES = 10  # 1000 releases: room for one release per patch version of every source
+
 def _fetch_our_releases(repo: str, net: NetworkManager) -> tuple[dict[str, str], dict[str, dict[str, str]]]:
     our_releases_by_brand: dict[str, str] = {}
     built_versions_by_brand: dict[str, dict[str, str]] = {}
     try:
-        our_releases_raw = net.get(f"https://api.github.com/repos/{repo}/releases?per_page=100", headers=net.gh_headers)
-        releases: list[dict[str, Any]] = json.loads(our_releases_raw)
-        for rel in releases:
-            tag = str(rel.get("tag_name") or "")
-            brand = release_brand(tag)
-            if not brand:
-                continue
-            if brand not in our_releases_by_brand:
-                our_releases_by_brand[brand] = str(rel.get("published_at") or "")
-            brand_built = built_versions_by_brand.setdefault(brand, {})
-            for asset in rel.get("assets", []):
-                name = str(asset.get("name") or "")
-                if m := _APK_ASSET_RE.match(name):
-                    base_name, ver = m.group(1).lower(), m.group(2)
-                    if base_name not in brand_built:
-                        brand_built[base_name] = ver
+        for page in range(1, _OUR_RELEASE_PAGES + 1):
+            our_releases_raw = net.get(f"https://api.github.com/repos/{repo}/releases?per_page=100&page={page}", headers=net.gh_headers)
+            releases: list[dict[str, Any]] = json.loads(our_releases_raw)
+            for rel in releases:
+                published = str(rel.get("published_at") or "")
+                tag = str(rel.get("tag_name") or "")
+                brand = release_brand(tag)
+                if not brand or rel.get("draft") or not published:
+                    continue
+                # A rebuilt release keeps its creation date but gets a new publish date, so the
+                # listing order (by creation) does not say which release was published last.
+                if published > our_releases_by_brand.get(brand, ""):
+                    our_releases_by_brand[brand] = published
+                brand_built = built_versions_by_brand.setdefault(brand, {})
+                for asset in rel.get("assets", []):
+                    name = str(asset.get("name") or "")
+                    if m := _APK_ASSET_RE.match(name):
+                        base_name, ver = m.group(1).lower(), m.group(2)
+                        if base_name not in brand_built:
+                            brand_built[base_name] = ver
+            if len(releases) < 100:
+                break
     except Exception as exc:
         epr(f"Failed to fetch our releases: {exc}")
     return our_releases_by_brand, built_versions_by_brand
@@ -191,7 +199,11 @@ def get_matrix(source: str) -> None:
         (e.patches[patches_source]["version"] for e in staged if patches_source in e.patches), "latest")
     with NetworkManager() as net:
         patches_tag = resolve_release_tag(patches_source, patches_spec, net)
+    # Release title: the brand's own display name if one entry sets it, else the slug in title case
+    # ("revanced-extended" -> "Revanced Extended", so set brand-title = "ReVanced Extended").
+    title = next((e.brand_title for e in staged if e.brand_title), "") or staged[0].brand.replace("-", " ").title()
     print(json.dumps({
+        "title": f"{title} Patches v{patches_tag.removeprefix('v')}",
         "include": include,
         "prerelease": is_prerelease,
         "patches_source": patches_source,

@@ -47,6 +47,7 @@ class AppEntry:
     table: str
     app_name: str
     brand: str
+    brand_title: str
     arch: str
     dpi: str
     version: str
@@ -54,6 +55,7 @@ class AppEntry:
     patcher_args: list[str]
     patches: dict[str, PatchSpec]
     exclusive_patches: bool
+    inclusive_patches: bool
     cli_source: str
     cli_version: str
     skip_sigcheck: bool
@@ -119,6 +121,7 @@ def parse_app_entries(data: dict[str, Any], main: Config) -> list[AppEntry]:
             table=table_name,
             app_name=str(t.get("app-name", table_name.replace("-", " "))),
             brand=str(t.get("brand", main.brand)),
+            brand_title=str(t.get("brand-title", "")),
             arch=arch,
             dpi=str(t.get("dpi", main.dpi)),
             version=str(t.get("version", "auto")),
@@ -126,6 +129,7 @@ def parse_app_entries(data: dict[str, Any], main: Config) -> list[AppEntry]:
             patcher_args=shlex.split(str(t.get("patcher-args", ""))),
             patches=patches,
             exclusive_patches=_parse_bool(t, "exclusive-patches", False),
+            inclusive_patches=_parse_bool(t, "inclusive-patches", False),
             cli_source=str(t.get("cli-source", main.cli_source)),
             cli_version=str(t.get("cli-version", main.cli_version)),
             skip_sigcheck=_parse_bool(t, "skip-sigcheck", False),
