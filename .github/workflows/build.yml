@@ -174,18 +174,21 @@ jobs:
           PATCHES_TAG: ${{ steps.set-matrix.outputs.patches_tag }}
           TITLE: ${{ steps.set-matrix.outputs.title }}
         run: |
+          # GitHub refuses writes for a while when a repo creates content too fast
+          # (a full build): wait and try again rather than failing the job.
+          retry() { for i in 1 2 3 4; do "$@" && return 0; echo "::warning::'$1 $2 $3' failed, retrying in $((i * 60))s"; sleep $((i * 60)); done; "$@"; }
           PATCHES_VER="${PATCHES_TAG#v}"
           VER="${SOURCE}-${PATCHES_VER}"
           echo "version=${VER}" >> "$GITHUB_OUTPUT"
           echo "title=${TITLE}" >> "$GITHUB_OUTPUT"
           if gh release view "$VER" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release edit "$VER" --draft --target "$GITHUB_SHA" --repo "$GITHUB_REPOSITORY"
+            retry gh release edit "$VER" --draft --target "$GITHUB_SHA" --repo "$GITHUB_REPOSITORY"
             if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$VER" >/dev/null 2>&1; then
-              gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/$VER" -f sha="$GITHUB_SHA" -F force=true >/dev/null
+              retry gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/$VER" -f sha="$GITHUB_SHA" -F force=true >/dev/null
               echo "Moved tag '$VER' to $GITHUB_SHA"
             fi
           else
-            gh release create "$VER" --draft --target "$GITHUB_SHA" --title "$TITLE" --notes "" --repo "$GITHUB_REPOSITORY"
+            retry gh release create "$VER" --draft --target "$GITHUB_SHA" --title "$TITLE" --notes "" --repo "$GITHUB_REPOSITORY"
           fi
 
   run:
@@ -239,25 +242,35 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ needs.prepare.outputs.version }}
         run: |
+          # GitHub refuses writes for a while when a repo creates content too fast
+          # (a full build): wait and try again rather than failing the job.
+          retry() { for i in 1 2 3 4; do "$@" && return 0; echo "::warning::'$1 $2 $3' failed, retrying in $((i * 60))s"; sleep $((i * 60)); done; "$@"; }
           shopt -s nullglob
           apks=(./build/*.apk)
           if [[ ${#apks[@]} -eq 0 ]]; then
             echo "No APKs to upload, skipping"
             exit 0
           fi
-          gh release upload "$TAG" "${apks[@]}" --clobber --repo "$GITHUB_REPOSITORY"
+          retry gh release upload "$TAG" "${apks[@]}" --clobber --repo "$GITHUB_REPOSITORY"
 
-      - name: Upload build log to draft release
+      # The build log travels to the release job as an artifact: uploading it to the
+      # release and deleting it again cost two GitHub writes per app.
+      - name: Name build log
         if: always()
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ needs.prepare.outputs.version }}
           LABEL: ${{ matrix.id }}${{ matrix.arch && format('-{0}', matrix.arch) || '' }}
         run: |
-          [[ -f build.md ]] || exit 0
-          [[ -s build.md ]] || exit 0
-          cp build.md "build-${LABEL}.md"
-          gh release upload "$TAG" "build-${LABEL}.md" --clobber --repo "$GITHUB_REPOSITORY"
+          mkdir -p buildlog
+          if [[ -s build.md ]]; then cp build.md "buildlog/build-${LABEL}.md"; fi
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buildlog-${{ inputs.patch_source }}-${{ matrix.id }}${{ matrix.arch && format('-{0}', matrix.arch) || '' }}
+          path: buildlog/
+          if-no-files-found: ignore
+          retention-days: 1
 
   release:
     needs: [prepare, run]
@@ -291,16 +304,14 @@ jobs:
           has=$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '[.assets[].name | select(endswith(".apk"))] | length > 0')
           echo "has_apks=${has}" >> "$GITHUB_OUTPUT"
 
-      - name: Download logs from draft release
+      # A rerun in which every app failed has no logs; the release then keeps its old notes.
+      - name: Download build logs
         if: steps.check.outputs.has_apks == 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ needs.prepare.outputs.version }}
-        run: |
-          mkdir -p logs
-          # A rerun in which every app failed uploads no log; the release then keeps its old notes.
-          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern "build-*.md" --dir logs || echo "No new build logs"
-          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[] | select(.name | startswith("build-")) | .apiUrl' | xargs -I{} gh api --method DELETE "{}"
+        uses: actions/download-artifact@v4
+        with:
+          pattern: buildlog-${{ inputs.patch_source }}-*
+          path: logs
+          merge-multiple: true
 
       - name: Combine logs and finalize release
         if: steps.check.outputs.has_apks == 'true'
@@ -310,10 +321,12 @@ jobs:
           PRERELEASE: ${{ needs.prepare.outputs.prerelease }}
           TITLE: ${{ needs.prepare.outputs.title }}
         run: |
+          retry() { for i in 1 2 3 4; do "$@" && return 0; echo "::warning::'$1 $2 $3' failed, retrying in $((i * 60))s"; sleep $((i * 60)); done; "$@"; }
+          mkdir -p logs
           uv run python -m src.scripts.logs --logs-dir logs | sed "s/{TAG}/$TAG/g" > final.md
           ARGS=(--draft=false --title "$TITLE" "--prerelease=${PRERELEASE:-false}")
           if [ -s final.md ]; then ARGS+=(--notes-file final.md); fi
-          gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" "${ARGS[@]}"
+          retry gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" "${ARGS[@]}"
 
       - name: Send Telegram notification
         if: steps.check.outputs.has_apks == 'true' && env.TG_TOKEN != '' && env.TG_CHAT != ''

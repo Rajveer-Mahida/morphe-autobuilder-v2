@@ -155,7 +155,9 @@ jobs:
     if: needs.check-versions.outputs.build_matrix != '[]' && needs.check-versions.outputs.build_matrix != ''
     strategy:
       fail-fast: false
-      max-parallel: 6
+      # GitHub caps how fast one repo may create releases and upload files; more
+      # sources at once made it refuse every write for the rest of a full build.
+      max-parallel: 3
       matrix:
         brand: ${{ fromJSON(needs.check-versions.outputs.build_matrix) }}
     uses: ./.github/workflows/build.yml
