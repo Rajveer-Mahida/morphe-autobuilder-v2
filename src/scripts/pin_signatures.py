@@ -41,8 +41,10 @@ from src.core.logger import epr, pr, wpr
 from src.core.network import NetworkError, NetworkManager
 
 SIG_FILE = Path("sig.txt")
-_PAUSE = 4.0           # seconds between apps: APKMirror answers 429 to a fast crawl
-_MAX_REFUSALS = 3      # stop after this many apps in a row could not be read
+_PAUSE = 6.0           # seconds between apps: APKMirror answers 429 to a fast crawl
+_MAX_REFUSALS = 3      # this many apps in a row refused means APKMirror is rate-limiting us
+_COOLDOWN = 300.0      # then wait this long before carrying on ...
+_MAX_COOLDOWNS = 8     # ... at most this many times, then stop (a rerun continues)
 _APKPURE_API = "https://tapi.pureapk.com/v3/get_app_his_version"
 _APKPURE_HEADERS = {"Ual-Access-Businessid": "projecta", "Ual-Access-ProjectA": '{"device_info":{"os_ver":"36"}}'}
 _PKG_FROM_URL = re.compile(r"/([A-Za-z][\w]*(?:\.[\w]+)+)/?$")
@@ -51,11 +53,14 @@ _PKG_FROM_URL = re.compile(r"/([A-Za-z][\w]*(?:\.[\w]+)+)/?$")
 def _text(html: str) -> str:
     return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html))
 
-def _apkmirror_cert(app_url: str, net: NetworkManager) -> tuple[str, str, str] | None:
-    """(package, sha256, sha1) from the newest upload on an APKMirror app page."""
+def _apkmirror_cert(app_url: str, net: NetworkManager, skip: set[str] | frozenset[str] = frozenset()) -> tuple[str, str, str] | None:
+    """(package, sha256, sha1) from the newest upload on an APKMirror app page. Returns
+    (package, "", "") without reading further pages when the package is in `skip`."""
     page = net.get(app_url)
     pkg_m = re.search(r"play\.google\.com/store/apps/details\?id=([\w.]+)", page)
     rel = re.search(r'href="(/apk/[^"]+-release/)"', page)
+    if pkg_m and pkg_m.group(1) in skip:
+        return pkg_m.group(1), "", ""
     if not (pkg_m and rel):
         return None
     release = net.get(urljoin("https://www.apkmirror.com", rel.group(1)))
@@ -92,6 +97,7 @@ def pin(write: bool) -> None:
     added: list[str] = []
     seen: set[str] = set()
     refusals = 0
+    cooldowns = 0
 
     def record(line: str) -> None:
         added.append(line)
@@ -115,11 +121,16 @@ def pin(write: bool) -> None:
                     wpr(f"{e.table}: no APKMirror page and no APKPure record - left unpinned")
                 continue
             if refusals >= _MAX_REFUSALS:
-                epr(f"APKMirror refused {refusals} apps in a row; stopping - run again later to pin the rest")
-                break
+                if cooldowns >= _MAX_COOLDOWNS:
+                    epr(f"APKMirror still refuses after {cooldowns} cool-downs; stopping - run again later to pin the rest")
+                    break
+                cooldowns += 1
+                wpr(f"APKMirror refused {refusals} apps in a row; waiting {_COOLDOWN:.0f}s ({cooldowns}/{_MAX_COOLDOWNS})")
+                time.sleep(_COOLDOWN)
+                refusals = 0
             time.sleep(_PAUSE)
             try:
-                found = _apkmirror_cert(url, net)
+                found = _apkmirror_cert(url, net, skip=pinned | seen)
                 refusals = 0
             except NetworkError as exc:
                 refusals += 1
@@ -129,7 +140,7 @@ def pin(write: bool) -> None:
                 wpr(f"{e.table}: no certificate on APKMirror - left unpinned")
                 continue
             pkg, sha256, sha1 = found
-            if pkg in pinned or pkg in seen:
+            if pkg in pinned or pkg in seen or not sha256:
                 continue
             seen.add(pkg)
             other = _apkpure_sha1(pkg, net)
