@@ -12,10 +12,11 @@
 # See the AUTHORS file in the root directory for details.
 # ---------------------------------------------------------
 # Modified in the morphe-autobuilder-v2 fork: the per-app build logs are now
-# rendered as structured release notes (download table, build details, install
-# steps, signing certificate) instead of being concatenated line by line.
+# rendered as structured release notes (download table and build details with
+# the signing certificate) instead of being concatenated line by line.
 
 import argparse
+import os
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -27,7 +28,6 @@ _BUILD_RE = re.compile(r"^- 🟢 » (?P<name>.+?)(?: \((?P<details>[^)]*)\))?: (
 _COMPONENT_RE = re.compile(r"^> ⚙️ » (?P<kind>CLI|Patches): `(?P<file>[^`]+)`")
 _LINK_RE = re.compile(r"\[[^\]]*\]\((?P<url>[^)]+)\)")
 _SIGNER_RE = re.compile(r"^> 🔐 » Signer: `(?P<cert>[^`]+)`")
-_MICROG_FALLBACK = "https://github.com/MorpheApp/MicroG-RE/releases"
 _ARCH_ORDER = {"arm64-v8a": 0, "armeabi-v7a": 1, "x86_64": 2, "x86": 3}
 
 
@@ -48,7 +48,6 @@ class _Notes:
     patches: dict[str, str] = field(default_factory=dict)  # file -> changelog url
     cli: list[str] = field(default_factory=list)
     signers: list[str] = field(default_factory=list)
-    microg_url: str = ""
 
 def _parse_log_file(log: Path, notes: _Notes) -> None:
     lines = [s for ln in log.read_text(encoding="utf-8").splitlines() if (s := ln.strip())]
@@ -60,9 +59,6 @@ def _parse_log_file(log: Path, notes: _Notes) -> None:
         elif m := _SIGNER_RE.match(line):
             if m["cert"] not in notes.signers:
                 notes.signers.append(m["cert"])
-        elif line.startswith("▶️") and "MicroG" in line:
-            if link := _LINK_RE.search(line):
-                notes.microg_url = notes.microg_url or link["url"]
         elif m := _COMPONENT_RE.match(line):
             if m["kind"] == "CLI":
                 if m["file"] not in notes.cli:
@@ -99,21 +95,9 @@ def _render(notes: _Notes) -> str:
     for cert in notes.signers:
         out.append(f"| Signing certificate (SHA-256) | `{cert}` |")
 
-    microg = notes.microg_url or _MICROG_FALLBACK
-    out += [
-        "",
-        "### 📲 Installation",
-        "",
-        "1. **Choose your architecture.** Most phones from the last few years are `arm64-v8a`; older or budget devices may need `armeabi-v7a`. *Universal* builds run on both.",
-        "2. **Remove conflicting installs.** Uninstall any copy of the same app that was signed by someone else - Android will not update across signing keys.",
-        f"3. **Google sign-in.** YouTube and YouTube Music need [MicroG-RE]({microg}) installed for account login.",
-    ]
-    if notes.signers:
-        out += [
-            "",
-            "> [!TIP]",
-            "> To verify a download, run `apksigner verify --print-certs <file>.apk` and compare its certificate SHA-256 with the one above.",
-        ]
+    # Install steps and how to verify a download live in the README, not in every release.
+    if repo := os.getenv("GITHUB_REPOSITORY"):
+        out += ["", f"Installation and signature verification: see the [README](https://github.com/{repo}#readme)."]
     return "\n".join(out) + "\n"
 
 def combine_logs(logs_dir: Path | str = "logs") -> None:
