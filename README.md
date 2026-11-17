@@ -9,7 +9,7 @@
 [![Downloads](https://img.shields.io/github/downloads/Rajveer-Mahida/morphe-autobuilder-v2/total?style=for-the-badge&logo=github&logoColor=white&label=Downloads&color=6E40C9)](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases)
 [![License](https://img.shields.io/badge/License-GPLv3-6E40C9?style=for-the-badge)](LICENSE)
 
-[**Apps**](#-apps) · [**Install**](#-installation) · [**Verify**](#-verify-your-download) · [**How it works**](#%EF%B8%8F-how-it-works) · [**Build your own**](#%EF%B8%8F-build-your-own)
+[**Apps**](#-apps) · [**Install**](#-installation) · [**Verify**](#-verify-your-download) · [**Build your own**](#%EF%B8%8F-build-your-own)
 
 </div>
 
@@ -81,23 +81,6 @@ apksigner verify --print-certs app.apk | grep SHA-256
 ```
 
 On a phone, apps such as [App Manager](https://github.com/MuntashirAkon/AppManager) show the same fingerprint under *Signatures*. The fingerprint is also listed in the *Build details* of every release.
-
-## ⚙️ How it works
-
-```mermaid
-flowchart LR
-    A["⏰ Daily check<br/>10:00 UTC"] --> B{"New patch<br/>release?"}
-    B -- no --> Z["💤 Nothing to do"]
-    B -- yes --> C["📥 Download stock APK<br/>APKMirror → Uptodown → APKPure"]
-    C --> D["✅ Verify original<br/>app signature"]
-    D --> E["🩹 Patch with<br/>Morphe CLI"]
-    E --> F["🔏 Sign with<br/>release key"]
-    F --> G["🚀 Publish release<br/>morphe-2.3.0"]
-```
-
-- **Download fallback:** if APKMirror is blocked or lacks the exact version and architecture, Uptodown and then APKPure are tried. A file is only accepted if it matches the requested architecture.
-- **Original-app check:** before patching, the stock APK's signature is checked against the official developer's certificate in [`sig.txt`](sig.txt), so a tampered download is never patched.
-- **One release per patch version:** the build is pinned to the patch release it started with, and rebuilding the same version updates that release instead of creating a new one.
 
 ## 🛠️ Build your own
 
