@@ -50,9 +50,18 @@ KNOWN_BRANDS: dict[str, tuple[str, str]] = {
 _ARCH = {"arm-v7a": "armeabi-v7a", "arm64-v8a": "arm64-v8a", "x86": "x86", "x86_64": "x86_64", "all": "all", "auto": "both", "both": "both"}
 # rvb entries known not to build, with the reason (checked against rvb's own releases).
 BROKEN: dict[str, str] = {
+    "BraveBrowser-dh6k-Beta": "APKMirror lists Brave Beta only under beta version names, which the builder skips "
+                              "as pre-releases, so no version can be chosen; rvb does not publish it either.",
     "ProtonVPN-Paresh": "Paresh's 'Proton VPN Premium' patch no longer matches the app it claims to support "
                         "(fingerprint GetHasSubscription); rvb does not publish it either. Proton VPN is still "
                         "built from hoodles and hxreborn.",
+}
+# Extra patcher arguments some rvb apps need here. {stock_apk} is replaced by the
+# builder with the path of the downloaded original APK.
+EXTRA_ARGS: dict[str, str] = {
+    # "Provide original app certificate" cannot read Niagara's v2/v3-only signature from
+    # the APK being patched; point it at the untouched original instead.
+    "NiagaraLauncher-Entree3k": "-e 'Provide original app certificate' -OoriginalApkPath={stock_apk}",
 }
 _NOISE = {"morphe", "patches", "patch", "revanced", "the", "for", "mod", "mods"}
 
@@ -254,7 +263,8 @@ def convert(net: NetworkManager) -> tuple[str, Report]:
         if app.get("dpi"):
             dpi = [d for d in str(app["dpi"]).split() if d != "auto"]
             lines.append(f"dpi = {_toml(','.join(dpi) if dpi else 'all')}")
-        if args := app.get("patcher-args"):
+        args = " ".join(filter(None, [str(app.get("patcher-args") or ""), EXTRA_ARGS.get(app["_table"], "")]))
+        if args:
             lines.append(f"patcher-args = {_toml(args)}")
         if str(app.get("exclusive-patches", "false")).lower() not in ("false", ""):
             lines.append("exclusive-patches = true")

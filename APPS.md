@@ -1,6 +1,6 @@
 # 📚 All apps
 
-Every app this repository builds: **231 apps** from **73 patch sources**.
+Every app this repository builds: **230 apps** from **73 patch sources**.
 Each patch source publishes its own releases, tagged `<source>-<patch version>`.
 
 > [!NOTE]
@@ -25,7 +25,6 @@ Each patch source publishes its own releases, tagged `<source>-<patch version>`.
 | [Heval99](#heval99) | 4 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=heval99-&expanded=true) |
 | [Brosssh](#brosssh) | 3 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=brosssh-&expanded=true) |
 | [Byehi98](#byehi98) | 3 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=byehi98-&expanded=true) |
-| [Dh6K](#dh6k) | 3 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=dh6k-&expanded=true) |
 | [Lurk](#lurk) | 3 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=lurk-&expanded=true) |
 | [Mwbra130](#mwbra130) | 3 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=mwbra130-&expanded=true) |
 | [Newuser7171](#newuser7171) | 3 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=newuser7171-&expanded=true) |
@@ -33,6 +32,7 @@ Each patch source publishes its own releases, tagged `<source>-<patch version>`.
 | [AkashSriram](#akashsriram) | 2 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=akashsriram-&expanded=true) |
 | [Bufferk](#bufferk) | 2 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=bufferk-&expanded=true) |
 | [Debakarr](#debakarr) | 2 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=debakarr-&expanded=true) |
+| [Dh6K](#dh6k) | 2 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=dh6k-&expanded=true) |
 | [Entree3k](#entree3k) | 2 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=entree3k-&expanded=true) |
 | [HushFacebook](#hushfacebook) | 2 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=hushfacebook-&expanded=true) |
 | [HushGram](#hushgram) | 2 | [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=hushgram-&expanded=true) |
@@ -371,17 +371,6 @@ Patches: [byehi98/okish-morphe-patches](https://github.com/byehi98/okish-morphe-
 | Swamp Attack 2 | Universal |
 | Swift Backup | `arm64-v8a` · `armeabi-v7a` |
 
-<a id="dh6k"></a>
-## Dh6K
-
-Patches: [dh6k/morphe-patches](https://github.com/dh6k/morphe-patches) · [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=dh6k-&expanded=true)
-
-| App | Architecture |
-| :--- | :---: |
-| Brave Browser Beta | `arm64-v8a` · `armeabi-v7a` |
-| Brave Browser Nightly | `arm64-v8a` · `armeabi-v7a` |
-| Titanium Browser | `arm64-v8a` · `armeabi-v7a` |
-
 <a id="lurk"></a>
 ## Lurk
 
@@ -454,6 +443,16 @@ Patches: [debakarr/morphe-patches](https://github.com/debakarr/morphe-patches) �
 | :--- | :---: |
 | Flipkart | `arm64-v8a` · `armeabi-v7a` |
 | Meesho | `arm64-v8a` · `armeabi-v7a` |
+
+<a id="dh6k"></a>
+## Dh6K
+
+Patches: [dh6k/morphe-patches](https://github.com/dh6k/morphe-patches) · [Releases](https://github.com/Rajveer-Mahida/morphe-autobuilder-v2/releases?q=dh6k-&expanded=true)
+
+| App | Architecture |
+| :--- | :---: |
+| Brave Browser Nightly | `arm64-v8a` · `armeabi-v7a` |
+| Titanium Browser | `arm64-v8a` · `armeabi-v7a` |
 
 <a id="entree3k"></a>
 ## Entree3k

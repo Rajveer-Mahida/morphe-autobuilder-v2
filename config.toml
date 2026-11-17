@@ -150,7 +150,7 @@ apkmirror-dlurl = "https://www.apkmirror.com/apk/jio-platforms-limited/jiotv-and
 "github:durgesh0505/chiggi_morphe_patches" = []
 
 # >>> imported from nullcpy/rvb - regenerate with `python -m src.scripts.import_rvb --write` >>>
-# 220 apps from https://github.com/nullcpy/rvb/tree/data/configs/patches (GPLv3)
+# 219 apps from https://github.com/nullcpy/rvb/tree/data/configs/patches (GPLv3)
 
 # ---- adobo: github:jkennethcarino/adobo ----
 
@@ -786,17 +786,6 @@ apkpure-dlurl = "https://apkpure.com/pixiv/jp.pxv.android"
 
 # ---- dh6k: github:dh6k/morphe-patches ----
 
-[BraveBrowser-dh6k-Beta]
-app-name = "Brave Browser Beta"
-brand = "dh6k"
-arch = "both"
-apkmirror-dlurl = "https://www.apkmirror.com/apk/brave-software/brave-browser-beta"
-uptodown-dlurl = "https://brave-browser-beta.en.uptodown.com/android"
-apkpure-dlurl = "https://apkpure.com/brave-browser-beta/com.brave.browser_beta"
-
-[BraveBrowser-dh6k-Beta.patches]
-"github:dh6k/morphe-patches" = []
-
 [BraveBrowser-dh6k-Nightly]
 app-name = "Brave Browser Nightly"
 brand = "dh6k"
@@ -862,6 +851,7 @@ app-name = "Niagara Launcher"
 brand = "entree3k"
 brand-title = "Entree3k"
 arch = "both"
+patcher-args = "-e 'Provide original app certificate' -OoriginalApkPath={stock_apk}"
 apkmirror-dlurl = "https://www.apkmirror.com/apk/mellowdrop-studio/niagara-launcher-%f0%9f%94%b9-fresh-clean"
 uptodown-dlurl = "https://niagara-launcher.en.uptodown.com/android"
 apkpure-dlurl = "https://apkpure.com/niagara-launcher-%E2%80%A7-fresh-clean/bitpit.launcher"
